@@ -1,12 +1,151 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
-
-
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
 
 .header{
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #D3D7DA;
+    position: relative;
+}
+
+.header-left{
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.logo-img{
+    width: 100px;
+    border-radius: 20px;
+}
+
+.header-center{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.brandname{
+    font-weight: 200;
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.brandname a{
+    text-decoration: none;
+    color: #000;
+}
+
+.header-right{
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: flex-end;
+    height: 100%;
+    padding-bottom: 1rem;
+}
+
+.nav a{
+    margin-left: 15px;
+    text-decoration: none;
+    color: #000;
+}
+
+.nav a:hover, .nav a:focus{
+    text-decoration: underline;
+    color: #666;
+}
+
+.site-header {
+    border-bottom: 1px solid #D3D7DA;
     font-family: "Playfair Display", serif;
-    font-optical-sizing: auto;
-    font-size: 100;
-    font-weight: 500;
-    font-style: normal;
+}
+
+.container{
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.subheader{
+    height: auto;
+    display: flex;
+    justify-content: center;
+    padding: 0.1rem ;
+    background-color: #D3D7DA;
+}
+
+.taglist{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.taglist li, .taglist a{
+    white-space: nowrap;
+    display: inline;
+    text-decoration: none;
+    color: #000;
+}
+
+.taglist a:hover, .taglist a:focus{
+    text-decoration: underline;
+    color: #666;
+}
+
+.hero{
+    height: 70vh;
+    max-height: 700px;
+}
+
+.hero img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+}
+
+.hero-text{
+    position: absolute;
+    bottom: 15%;
+    left: 10%;
+    color: #fff;
+    font-family: "Manrope", sans-serif;
+}
+
+.hero-text h3{
+    font-size: 3rem;
+    background-color: #666;
+}
+
+.hero-text p{
+    font-size: 1rem;
+    background-color: #666;
+}
+
+
+.about-us {
+    justify-content: center;
+    display: flex;
+    font-family: "Manrope", sans-serif;
+    align-items: center;
     text-align: center;
+    margin-bottom: 1rem;
+}
+
+.about-us h2{
+    font-size: 3rem;
+    font-weight: 400;
+}
+
+.about-us p{
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #555;
+    margin: 0;
 }
