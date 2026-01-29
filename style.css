@@ -6,7 +6,6 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid #D3D7DA;
-    position: relative;
 }
 
 .header-left{
@@ -62,6 +61,7 @@
 .site-header {
     border-bottom: 1px solid #D3D7DA;
     font-family: "Playfair Display", serif;
+    position:sticky;
 }
 
 .container{
@@ -132,11 +132,11 @@
 
 .about-us {
     justify-content: center;
-    display: flex;
+    display: center;
     font-family: "Manrope", sans-serif;
     align-items: center;
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 .about-us h2{
@@ -148,13 +148,15 @@
     font-size: 1rem;
     line-height: 1.7;
     color: #555;
-    margin: 0;
+    margin-left: 15rem;
+    margin-right: 15rem;
 }
 
 
 .advert{
     background-color: darkslategrey;
     font-family: "Manrope", sans-serif;
+    margin-bottom: 2rem;
 }
 
 .ad-content{
@@ -238,6 +240,12 @@
     flex-direction: column;
     border: 1px solid #eee;
     background-color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.product-card:hover{
+    transform: translateY(-2px);
+    background-color: gray;
 }
 
 .image-box {
