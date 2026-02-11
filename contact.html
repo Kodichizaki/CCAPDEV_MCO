@@ -23,7 +23,7 @@
                     <a href="index.html">Home</a>
                     <a href="#">About</a>
                     <a href="contact.html" class="active">Contact</a> 
-                    <a href="#">Login</a>
+                    <a href="login.html">Login</a>
                 </nav>
             </div>
         </div>
@@ -87,6 +87,22 @@
             <a href="#" class="ad-btn">SIGN UP -></a>
         </div>
     </div>
+    <script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault(); // Stops the page from refreshing
 
+        // 1. Get the values from the boxes
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+
+        // 2. Create the email subject and body
+        const subject = `Inquiry from ${name}`;
+        const emailBody = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage:%0D%0A${message}`;
+
+        // 3. Open the user's email app
+        window.location.href = `mailto:hello@hiramph.com?subject=${subject}&body=${emailBody}`;
+    });
+    </script>
 </body>
 </html>

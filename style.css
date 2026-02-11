@@ -61,7 +61,10 @@
 .site-header {
     border-bottom: 1px solid #D3D7DA;
     font-family: "Playfair Display", serif;
-    position:sticky;
+    position: sticky;
+    top: 0;           /* REQUIRED: Tells it to stick to the top */
+    background: #fff; /* REQUIRED: Prevents text from showing through the menu */
+    z-index: 1000;    /* REQUIRED: Keeps the menu on top of other elements */
 }
 
 .container{
@@ -234,13 +237,10 @@
     border-radius: 4px;
 }
 
-.product-card {
-    flex: 0 0 250px; 
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #eee;
-    background-color: #fff;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+.product-card:hover {
+    transform: translateY(-5px);       /* Slight lift effect */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1); /* Adds a soft shadow */
+    border-color: darkslategray;       /* Highlight the border instead of the background */
 }
 
 .product-card:hover{
@@ -412,5 +412,73 @@
 .social-icon.instagram {
     background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
 }
+
+/* --- MOBILE RESPONSIVENESS --- */
+/* This code only runs on screens smaller than 768px (Tablets & Phones) */
+
+@media (max-width: 768px) {
+
+    /* 1. Fix the Header Layout */
+    .header {
+        height: auto;           /* Let header grow taller to fit stacked items */
+        flex-direction: column; /* Stack items vertically instead of side-by-side */
+        padding-bottom: 1rem;
+    }
+
+    .header-left, 
+    .header-right {
+        width: 100%;
+        justify-content: center; /* Center the logo and nav links */
+        flex: none;              /* Stop them from stretching weirdly */
+        margin-bottom: 10px;
+    }
+
+    .header-center {
+        position: static;        /* Stop floating in the middle */
+        transform: none;         /* Remove the centering translation */
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .logo-img {
+        width: 80px;             /* Make logo slightly smaller on phone */
+    }
+
+    /* 2. Fix the Navigation Links */
+    .nav {
+        display: flex;
+        flex-direction: column;  /* Stack links vertically */
+        align-items: center;
+        gap: 10px;               /* Add space between links */
+    }
+
+    .nav a {
+        margin-left: 0;          /* Remove left margin since they are stacked */
+        font-size: 1.1rem;       /* Make text easier to tap with a finger */
+    }
+
+    /* 3. Fix the Sub-Header (Categories) */
+    .taglist {
+        gap: 1rem;               /* Reduce gap between category names */
+        padding: 10px;
+        overflow-x: auto;        /* Allow scrolling if tags don't fit */
+        justify-content: flex-start; /* Align start so you can scroll from left */
+    }
+
+    /* 4. Fix Hero Section Text */
+    .hero-text h3 {
+        font-size: 2rem;         /* Make the big text smaller so it fits */
+    }
+    
+    .hero-text p {
+        font-size: 0.9rem;
+    }
+
+    /* 5. Fix Contact Form Spacing */
+    .contact-wrapper {
+        gap: 2rem;               /* Reduce gap between form and info */
+    }
+}
+
 
 
