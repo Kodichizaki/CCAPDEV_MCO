@@ -62,9 +62,9 @@
     border-bottom: 1px solid #D3D7DA;
     font-family: "Playfair Display", serif;
     position: sticky;
-    top: 0;           /* REQUIRED: Tells it to stick to the top */
-    background: #fff; /* REQUIRED: Prevents text from showing through the menu */
-    z-index: 1000;    /* REQUIRED: Keeps the menu on top of other elements */
+    top: 0;           
+    background: #fff; 
+    z-index: 1000;    
 }
 
 .container{
