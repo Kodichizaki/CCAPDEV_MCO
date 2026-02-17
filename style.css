@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
 
 .header{
@@ -60,7 +60,9 @@
 
 .site-header {
     border-bottom: 1px solid #D3D7DA;
-    font-family: "Playfair Display", serif;
+    font-family: "Dancing Script", cursive;
+    font-optical-sizing: auto;
+    font-weight: 400;
     position: sticky;
     top: 0;           
     background: #fff; 
@@ -75,31 +77,74 @@
 .subheader{
     height: auto;
     display: flex;
-    justify-content: center;
-    padding: 0.1rem ;
+    justify-content: flex-start; 
+    padding: 0.5rem 1.5rem;      
     background-color: #D3D7DA;
+    position: relative;
 }
 
-.taglist{
+.category-dropdown {
+    position: relative;
+    font-family: "Manrope", sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.category-dropdown summary {
+    list-style: none; 
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    user-select: none;
+    transition: color 0.2s;
 }
 
-.taglist li, .taglist a{
-    white-space: nowrap;
-    display: inline;
+.category-dropdown summary:hover {
+    color: #555;
+}
+
+.category-dropdown summary::-webkit-details-marker {
+    display: none;
+}
+
+.arrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.category-dropdown[open] .arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    background-color: white;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1001; 
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
     text-decoration: none;
-    color: #000;
+    display: block;
+    border-bottom: 1px solid #f1f1f1;
+    font-weight: 400;
 }
 
-.taglist a:hover, .taglist a:focus{
-    text-decoration: underline;
-    color: #666;
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+    color: lightseagreen; 
 }
 
 .hero{
@@ -205,13 +250,18 @@
 .features {
     padding-top: 2rem;
     padding-bottom: 2rem;
-    font-family: "Manrope", sans-serif;
+    font-family: "Vast Shadow", serif;
+    font-weight: 400;
+    text-align: center;
 }
 
 .section-title {
-    font-family: "Playfair Display", serif;
+    border-bottom: 1px solid #D3D7DA;
+    font-family: "Manrope", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
     font-size: 2rem;
-    color: #4A1C1C;
+    color: #000000;
     margin-bottom: 1.5rem;
     font-weight: 700;
 }
@@ -479,6 +529,5 @@
         gap: 2rem;               /* Reduce gap between form and info */
     }
 }
-
 
 
