@@ -720,7 +720,12 @@
     font-weight: 400;
     line-height: inherit;
     cursor: pointer;
-    display: inline; /* Ensures it behaves like text */
+    display: inline; 
+}
+
+.profile-dropdown button:hover{
+    text-decoration: underline;
+    color: #666;
 }
 
 .dropdown-menu {
@@ -751,8 +756,6 @@
 .dropdown-menu.show {
     display: block;
 }
-
-/* Shopping Cart Page */
 
 /* Cart Page */
 #cart-container {

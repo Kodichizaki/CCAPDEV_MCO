@@ -146,6 +146,10 @@ document.addEventListener("DOMContentLoaded", () => {
         { id: 6, email: "admin@hiramph.com", password: "admin123", role: "admin", cart: [] }
     ];
 
+    if (!localStorage.getItem("users")) {
+        localStorage.setItem("users", JSON.stringify(users));
+    }
+
     // Header Logic
     const profArea = document.getElementById("prof-area");
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -191,17 +195,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (cartContainer) {
         const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const storedUsers = JSON.parse(localStorage.getItem("users"));
+        const user = storedUsers.find(u => u.id === currentUser.id);
 
-        const cart = currentUser.cart || [];
-
-        if (cart.length === 0) {
+        if (!user || !user.cart || user.cart.length === 0) {
             cartContainer.innerHTML = "<p>Your cart is empty.</p>";
             return;
         } else {
             let total = 0;
             let html = "";
 
-            currentUser.cart.forEach((item, index) => {
+            user.cart.forEach((item, index) => {
                 const product = products.find(p => p.id === item.productId);
                 if (!product) {return;}
                 const priceNumber = parseInt(item.totalPrice.replace(/[^\d]/g, ''));
@@ -227,13 +231,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.removeFromCart = function(index) {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (!currentUser || !currentUser.cart) return;
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const storedUsers = JSON.parse(localStorage.getItem("users"));
+        const userIndex = storedUsers.findIndex(u => u.id === currentUser.id);
 
-    currentUser.cart.splice(index, 1);
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
-    location.reload();
-}
+        if (userIndex === -1) 
+            return;
+
+        storedUsers[userIndex].cart.splice(index, 1);
+
+        localStorage.setItem("users", JSON.stringify(storedUsers));
+        localStorage.setItem("currentUser", JSON.stringify(storedUsers[userIndex]));
+
+        location.reload();
+    }
+
     // ==========================================
     // LOGIN PAGE LOGIC
     // ==========================================
@@ -244,7 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault(); 
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
-            const verifyUser = users.find(user => 
+            const storedUsers = JSON.parse(localStorage.getItem("users"));
+            const verifyUser = storedUsers.find(user => 
             user.email === email && user.password === password
         );
 
@@ -378,13 +391,20 @@ document.addEventListener("DOMContentLoaded", () => {
      // Add To Cart Logic
         function addToCart(productId, rentalDetails){
             const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            const storedUsers = JSON.parse(localStorage.getItem("users"));
 
-            if (!currentUser) {return false;}
-            if (!currentUser.cart) {
-                currentUser.cart = [];
+            if (!currentUser) 
+                return false;
+
+            const userIndex = storedUsers.findIndex(u => u.id === currentUser.id);
+            if (userIndex === -1) 
+                return false;
+
+            if (!storedUsers[userIndex].cart) {
+                storedUsers[userIndex].cart = [];
             }
 
-            currentUser.cart.push({
+            storedUsers[userIndex].cart.push({
                 productId: productId,
                 startDate: rentalDetails.startDate,
                 endDate: rentalDetails.endDate,
@@ -392,6 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 totalPrice: rentalDetails.totalPrice
             });
 
+            localStorage.setItem("users", JSON.stringify(storedUsers));
             localStorage.setItem("currentUser", JSON.stringify(currentUser));
             return true;
         }
