@@ -287,6 +287,28 @@
     border-radius: 4px;
 }
 
+.sort-container {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-family: "Manrope", sans-serif;
+}
+
+.sort-dropdown {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: "Manrope", sans-serif;
+    font-size: 1rem;
+    margin-left: 10px;
+    cursor: pointer;
+    background-color: white;
+}
+
+.sort-dropdown:focus {
+    outline: none;
+    border-color: darkslategray;
+}
+
 .product-card:hover {
     transform: translateY(-5px);       /* Slight lift effect */
     box-shadow: 0 10px 20px rgba(0,0,0,0.1); /* Adds a soft shadow */
@@ -338,6 +360,131 @@
     margin-top: auto; 
 }
 
+.product-page-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    font-family: "Manrope", sans-serif;
+}
+
+.product-img-full {
+    flex: 1;
+    min-width: 300px;
+}
+
+.product-img-full img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    background-color: #f9f4f0; 
+}
+
+.product-info-side {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.breadcrumb {
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    text-decoration: none;
+}
+
+.detail-title {
+    font-family: "Playfair Display", serif;
+    font-size: 2.5rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #4A1C1C; /* Dark Red/Brown matching your screenshot */
+}
+
+.detail-price {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+
+/* Accordion Styles (Description/Measurements) */
+.detail-accordion {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-accordion details {
+    padding: 1rem 0;
+    cursor: pointer;
+}
+
+.detail-accordion summary {
+    list-style: none;
+    font-weight: 600;
+    color: #4A1C1C;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detail-accordion summary::after {
+    content: '+';
+    font-size: 1.2rem;
+}
+
+.detail-accordion details[open] summary::after {
+    content: '-';
+}
+
+.detail-accordion p {
+    margin-top: 1rem;
+    color: #555;
+    line-height: 1.6;
+    font-size: 0.9rem;
+}
+
+/* Size Selector */
+.size-section {
+    margin-top: 2rem;
+}
+
+.size-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.size-btn {
+    background-color: #3e2b26; /* Dark Brown */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-family: "Manrope", sans-serif;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.add-cart-btn {
+    margin-top: 2rem;
+    width: 100%;
+    background-color: darkslategray;
+    color: white;
+    padding: 15px;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.add-cart-btn:hover {
+    background-color: lightseagreen;
+}
 
 /* --- CONTACT PAGE STYLES --- */
 
