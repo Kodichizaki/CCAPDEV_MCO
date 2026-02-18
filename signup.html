@@ -9,36 +9,44 @@
 <body>
     <header class="site-header" id="Home">
         <div class="container header">
+
             <div class="header-left">
-                <img src="images/logo.png" alt="HiramPH Logo" class="logo-img">
+                <img src="images/logo.png" alt="Logo is Here" class="logo-img">
             </div>
 
             <div class="header-center">
                 <h1 class="brandname"><a href="index.html">HiramPH</a></h1>
             </div>
 
-            <div class="header-right">
+            <div class="header-right", id="header-right">
                 <nav class="nav">
-                    <a href="index.html">Home</a>
-                    <a href="index.html#About">About</a>
-                    <a href="contact.html">Contact</a>
-                    <a href="login.html">Login</a> 
+                    <a href="index.html"> Home </a>
+                    <a href="index.html#About">About </a> 
+                    <a href="contact.html">Contact </a> 
+
+                    <span id="prof-area">
+                        <a href="login.html" class="login-btn">Login</a>
+                    </span> 
                 </nav>
             </div>
         </div>
+    </header>
 
         <div class="container subheader">
-            <ul class="taglist">
-                <li><a href="marketplace.html?category=men">Men</a></li>
-                <li><a href="marketplace.html?category=women">Women</a></li>
-                <li><a href="marketplace.html?category=formal">Formal</a></li>
-                <li><a href="marketplace.html?category=casual">Casual</a></li>
-                <li><a href="marketplace.html?category=costumes">Costumes</a></li>
-                <li><a href="marketplace.html?category=footwear">Footwear</a></li>
-                <li><a href="marketplace.html?category=accessories">Accessories</a></li>
-            </ul>
+            <details class="category-dropdown">
+                <summary>Categories <span class="arrow">▼</span></summary>
+                <div class="dropdown-content">
+                    <a href="marketplace.html?category=men">Men</a>
+                    <a href="marketplace.html?category=women">Women</a>
+                    <a href="marketplace.html?category=formal">Formal</a>
+                    <a href="marketplace.html?category=casual">Casual</a>
+                    <a href="marketplace.html?category=costumes">Costumes</a>
+                    <a href="marketplace.html?category=footwear">Footwear</a>
+                    <a href="marketplace.html?category=accessories">Accessories</a>
+                </div>
+            </details>
         </div>
-    </header>
+
 
     <div class="container login-page">
         <div class="login-box">

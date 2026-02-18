@@ -1,8 +1,7 @@
-// We wrap everything in this listener so the script waits for the HTML to load first
 document.addEventListener("DOMContentLoaded", () => {
 
     // ==========================================
-    // 1. GLOBAL DATABASE
+    // GLOBAL DATABASE
     // ==========================================
     const products = [
         { 
@@ -65,26 +64,151 @@ document.addEventListener("DOMContentLoaded", () => {
             image: "images/costumes/grimace.jpg",
             description: "Be the life of the party with this vibrant purple costume."
         }
-        // (If you added more products, paste them back in right here!)
+        
     ];
 
+    // Temporary Users
+    const users = [
+        {id: 1, email: "tempuser1@gmail.com", password: "temppass1234", role: "user", cart: []},
+        {id: 2, email: "tempuser2@gmail.com", password: "temppass1234", role: "user", cart: []},
+        {id: 3, email: "tempuser3@gmail.com", password: "temppass1234", role: "user", cart: []},
+        {id: 4, email: "tempuser4@gmail.com", password: "temppass1234", role: "user", cart: []},
+        {id: 5, email: "tempuser5@gmail.com", password: "temppass1234", role: "user", cart: []},
+        { id: 6, email: "admin@hiramph.com", password: "admin123", role: "admin", cart: [] }
+    ];
 
+    // Header Logic
+    const profArea = document.getElementById("prof-area");
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (profArea && currentUser) {
+        profArea.innerHTML = `
+            <div class="profile-dropdown">
+                <button id="profile-btn" class="login-btn">
+                    Profile
+                </button>
+                <div id="dropdown-menu" class="dropdown-menu">
+                    <a href="cart.html">View Shopping Cart</a>
+                    <a href="#" id="logout-btn">Sign Out</a>
+                </div>
+            </div>
+        `;
+        const profileBtn = document.getElementById("profile-btn");
+        const dropdownMenu = document.getElementById("dropdown-menu");
+        const logoutBtn = document.getElementById("logout-btn");
+
+        profileBtn.addEventListener("click", () => {
+            dropdownMenu.classList.toggle("show");
+        });
+
+        // Logout 
+        logoutBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            localStorage.removeItem("currentUser");
+            alert("Signed out successfully.");
+            window.location.href = "index.html";
+        });
+
+        // Close dropdown
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".profile-dropdown")) {
+                dropdownMenu.classList.remove("show");
+            }
+        });
+    } 
+
+    // Cart Logic
+    const cartContainer = document.getElementById("cart-container");
+
+    if (cartContainer) {
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        const cart = currentUser.cart || [];
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+            return;
+        } else {
+            let total = 0;
+            let html = "";
+
+            currentUser.cart.forEach((item, index) => {
+                const product = products.find(p => p.id === item.productId);
+                if (!product) {return;}
+                const priceNumber = parseInt(item.totalPrice.replace(/[^\d]/g, ''));
+                total += priceNumber;
+
+                html += `
+                    <div class="cart-card">
+                        <img src="${product.image}" alt="${product.name}" class="cart-img">
+                        <div class="cart-info">
+                            <h3>${product.name}</h3>
+                            <p><strong>Dates:</strong> ${item.startDate} → ${item.endDate}</p>
+                            <p><strong>Duration:</strong> ${item.days} day(s)</p>
+                            <p><strong>Price:</strong> ${item.totalPrice}</p>
+                            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `<h2 class="cart-total">Total: ₱${total.toLocaleString()}</h2>`;
+            cartContainer.innerHTML = html;
+        }
+    }
+
+    window.removeFromCart = function(index) {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser || !currentUser.cart) return;
+
+    currentUser.cart.splice(index, 1);
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    location.reload();
+}
     // ==========================================
-    // 2. LOGIN PAGE LOGIC
+    // LOGIN PAGE LOGIC
     // ==========================================
     const loginForm = document.getElementById('loginForm');
     
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault(); 
-            alert("Login Successful! Redirecting to Homepage...");
-            window.location.href = "index.html"; 
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const verifyUser = users.find(user => 
+            user.email === email && user.password === password
+        );
+
+            if (verifyUser){
+                const existingUser = JSON.parse(localStorage.getItem("currentUser"));
+
+                if (existingUser && existingUser.email === verifyUser.email) {
+                    localStorage.setItem("currentUser", JSON.stringify(existingUser));
+                } 
+                else {
+                    localStorage.setItem("currentUser", JSON.stringify(verifyUser));
+                }
+
+                if (verifyUser.role === "admin"){
+                    alert("Admin Login Successful! Redirecting to Homepage...");
+                    window.location.href = "admin.html"; 
+                }
+                else {
+                    alert("Login Successful! Redirecting to Homepage...")
+                    window.location.href = "index.html";
+                }     
+            }
+            else {
+                alert("Invalid credentials!");
+            }
+            
         });
     }
 
 
+
     // ==========================================
-    // 3. CONTACT PAGE LOGIC
+    // CONTACT PAGE LOGIC
     // ==========================================
     const contactForm = document.querySelector('form');
     const messageBox = document.getElementById('message');
@@ -107,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ==========================================
-    // 4. MARKETPLACE PAGE LOGIC (CATEGORIES & SORTING)
+    // MARKETPLACE PAGE LOGIC (CATEGORIES & SORTING)
     // ==========================================
     const productContainer = document.getElementById('product-container');
 
@@ -132,7 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (productList.length > 0) {
                 productList.forEach(product => {
-                    // Notice how the image links to product.html?id=...
                     const productHTML = `
                         <div class="product-card">
                             <a href="product.html?id=${product.id}" style="text-decoration: none; color: inherit;">
@@ -156,6 +279,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+       
+
+
+
         // Initial draw of the products
         renderProducts(displayProducts);
 
@@ -164,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (sortSelect) {
             sortSelect.addEventListener('change', (e) => {
                 const sortValue = e.target.value;
-                let sortedList = [...displayProducts]; // Copy the array
+                let sortedList = [...displayProducts]; 
 
                 if (sortValue === 'low-high') {
                     sortedList.sort((a, b) => a.priceVal - b.priceVal);
@@ -174,14 +301,36 @@ document.addEventListener("DOMContentLoaded", () => {
                     sortedList.sort((a, b) => a.name.localeCompare(b.name));
                 }
 
-                renderProducts(sortedList); // Re-draw the screen
+                renderProducts(sortedList); 
             });
         }
     }
 
+     // Add To Cart Logic
+        function addToCart(productId, rentalDetails){
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+            if (!currentUser) {return false;}
+            if (!currentUser.cart) {
+                currentUser.cart = [];
+            }
+
+            currentUser.cart.push({
+                productId: productId,
+                startDate: rentalDetails.startDate,
+                endDate: rentalDetails.endDate,
+                days: rentalDetails.days,
+                totalPrice: rentalDetails.totalPrice
+            });
+
+            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+            return true;
+        }
+
+
 
     // ==========================================
-    // 5. SINGLE PRODUCT PAGE LOGIC (WITH START & END DATES)
+    // SINGLE PRODUCT PAGE LOGIC (WITH START & END DATES)
     // ==========================================
     const singleProductContainer = document.getElementById('single-product-container');
     
@@ -189,6 +338,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         const productId = parseInt(urlParams.get('id'));
         const product = products.find(p => p.id === productId);
+
+
 
         if (product) {
             singleProductContainer.innerHTML = `
@@ -245,11 +396,25 @@ document.addEventListener("DOMContentLoaded", () => {
             const daysIndicator = document.getElementById('days-indicator');
             const rentBtn = document.getElementById('rent-btn');
 
-            // 1. Set the minimum start date to TODAY
+            // Set the minimum start date to TODAY
             const today = new Date().toISOString().split('T')[0];
             startDateInput.min = today;
 
-            // 2. Function to calculate days and update price
+            // prevent rentals when not logged in
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+            if (!currentUser) {
+                rentBtn.textContent = "Login to Rent";
+
+                rentBtn.addEventListener("click", () => {
+                    alert("Please login first!");
+                    window.location.href = "login.html";
+                });
+
+                return;
+            }
+
+            // Function to calculate days and update price
             function updateRentalDetails() {
                 const start = startDateInput.value ? new Date(startDateInput.value) : null;
                 const end = endDateInput.value ? new Date(endDateInput.value) : null;
@@ -278,7 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return { days, formattedPrice };
             }
 
-            // 3. When Start Date changes, make sure End Date can't be earlier than Start Date
+            // When Start Date changes, make sure End Date can't be earlier than Start Date
             startDateInput.addEventListener('change', () => {
                 if (startDateInput.value) {
                     endDateInput.min = startDateInput.value;
@@ -291,18 +456,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateRentalDetails();
             });
 
-            // 4. Update calculations when End Date changes
+            // Update calculations when End Date changes
             endDateInput.addEventListener('change', updateRentalDetails);
 
-            // 5. Action when rent button is clicked
             rentBtn.addEventListener('click', () => {
-                if (!startDateInput.value || !endDateInput.value) {
-                    alert("Please select both a Start Date and an End Date before continuing!");
+                if (!startDateInput.value || !endDateInput.value){
+                    alert("Select Both Dates.");
                     return;
                 }
 
                 const rentalInfo = updateRentalDetails();
-                alert(`Awesome! You booked the ${product.name} from ${startDateInput.value} to ${endDateInput.value} (${rentalInfo.days} days). Total: ${rentalInfo.formattedPrice}`);
+
+                const valid = addToCart(product.id, {
+                    startDate: startDateInput.value,
+                    endDate: endDateInput.value,
+                    days: rentalInfo.days,
+                    totalPrice: rentalInfo.formattedPrice
+                });
+                if(valid){
+                    alert("Item Added To Cart!");
+                }
             });
 
         } else {
