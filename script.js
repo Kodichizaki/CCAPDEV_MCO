@@ -2,14 +2,15 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // ==========================================
-    // GLOBAL DATABASE
+    // 1. GLOBAL DATABASE
     // ==========================================
     const products = [
         { 
             id: 1, 
             name: "Batman Shirt", 
             category: "men", 
-            price: "₱3,100", priceVal: 3100, 
+            price: "₱3,100", 
+            priceVal: 3100, 
             size: "S", 
             image: "images/men/batman2.jpg", 
             description: "Channel the Dark Knight with this premium cotton graphic tee."
@@ -18,7 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
             id: 2, 
             name: "Prom Suit", 
             category: "men", 
-            price: "₱4,000", priceVal: 4000, 
+            price: "₱4,000", 
+            priceVal: 4000, 
             size: "S", 
             image: "images/men/promsuit.jpg",
             description: "Stand out at your next formal event. This slim-fit flower stitched tuxedo includes jacket, trousers, and a black inner shirt."
@@ -27,68 +29,67 @@ document.addEventListener("DOMContentLoaded", () => {
             id: 3, 
             name: "Mens Summer Shirt", 
             category: "men", 
-            price: "₱3,800", priceVal: 3800, 
+            price: "₱3,800", 
+            priceVal: 3800, 
             size: "S", 
             image: "images/men/mensshirt2.jpg",
-            description: "Stay cool in this breathable button-down. Perfect for beach weddings or casual summer parties."
+            description: "Stay cool in this breathable button-down. Perfect for beach weddings or casual summer days."
         },
         { 
             id: 4, 
             name: "Filipiniana Dress", 
             category: "women", 
-            price: "₱3,400", priceVal: 3400, 
+            price: "₱3,400", 
+            priceVal: 3400, 
             size: "S", 
             image: "images/women/filipiniana.jpg",
-            description: "A modern take on the classic Filipiniana. Features butterfly sleeves and intricate embroidery on the bodice."
+            description: "Elegant traditional Filipiniana dress perfect for formal events."
         },
         { 
             id: 5, 
-            name: "Womens Blazer", 
-            category: "women", 
-            price: "₱3,300", priceVal: 3300, 
-            size: "S", 
-            image: "images/women/wsuit.jpg", 
-            description: "Power dressing made elegant. This tailored blazer pairs perfectly with slacks or a skirt."
+            name: "Shrek Shirt", 
+            category: "casual", 
+            price: "₱3,000", 
+            priceVal: 3000, 
+            size: "M", 
+            image: "images/casual/shrek.jpg",
+            description: "Get out of my swamp! Casual and comfortable graphic tee."
         },
         { 
             id: 6, 
-            name: "Shrek Shirt", 
-            category: "casual", 
-            price: "₱3,000", priceVal: 3000, 
-            size: "M", 
-            image: "images/casual/shrek.jpg",
-            description: "Get out of my swamp! This fun, casual tee is perfect for everyday wear or movie marathons."
-        },
-        { 
-            id: 7, 
             name: "Grimace Costume", 
             category: "costumes", 
-            price: "₱4,000", priceVal: 4000, 
+            price: "₱4,000", 
+            priceVal: 4000, 
             size: "S", 
             image: "images/costumes/grimace.jpg",
-            description: "Be the life of the party with this inflatable Grimace costume."
+            description: "Be the life of the party with this vibrant purple costume."
         }
+        // (If you added more products, paste them back in right here!)
     ];
-    
+
+
     // ==========================================
-    // 1. LOGIN PAGE LOGIC
+    // 2. LOGIN PAGE LOGIC
     // ==========================================
     const loginForm = document.getElementById('loginForm');
     
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Stops the page from refreshing
+            e.preventDefault(); 
             alert("Login Successful! Redirecting to Homepage...");
             window.location.href = "index.html"; 
         });
     }
 
+
     // ==========================================
-    // 2. CONTACT PAGE LOGIC
+    // 3. CONTACT PAGE LOGIC
     // ==========================================
     const contactForm = document.querySelector('form');
     const messageBox = document.getElementById('message');
     
+    // Only run if we are actually on the contact page
     if (contactForm && messageBox) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -104,14 +105,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+
     // ==========================================
-    // 3. MARKETPLACE PAGE LOGIC
+    // 4. MARKETPLACE PAGE LOGIC (CATEGORIES & SORTING)
     // ==========================================
     const productContainer = document.getElementById('product-container');
-    const sortSelect = document.getElementById('sortSelect');
 
     if (productContainer) {
-        
         const urlParams = new URLSearchParams(window.location.search);
         const currentCategory = urlParams.get('category');
 
@@ -120,29 +120,22 @@ document.addEventListener("DOMContentLoaded", () => {
             titleElement.textContent = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
         }
 
-        function displayProducts(sortBy) {
+        // Filter products by category
+        let displayProducts = products.filter(product => {
+            if (!currentCategory || currentCategory === 'all') return true;
+            return product.category === currentCategory;
+        });
+
+        // Function to draw products on the screen
+        function renderProducts(productList) {
             productContainer.innerHTML = ''; 
 
-            let filteredList = products.filter(product => {
-                if (!currentCategory || currentCategory === 'all') return true;
-                return product.category === currentCategory;
-            });
-
-            if (sortBy === 'az') {
-                filteredList.sort((a, b) => a.name.localeCompare(b.name));
-            } else if (sortBy === 'low-high') {
-                filteredList.sort((a, b) => a.priceVal - b.priceVal);
-            } else if (sortBy === 'high-low') {
-                filteredList.sort((a, b) => b.priceVal - a.priceVal);
-            } else if (['XS', 'S', 'M', 'L', 'XL', 'XXL'].includes(sortBy)) {
-                filteredList = filteredList.filter(product => product.size === sortBy);
-            }
-
-            if (filteredList.length > 0) {
-                filteredList.forEach(product => {
+            if (productList.length > 0) {
+                productList.forEach(product => {
+                    // Notice how the image links to product.html?id=...
                     const productHTML = `
-                        <a href="product.html?id=${product.id}" style="text-decoration:none; color:inherit;">
-                            <div class="product-card">
+                        <div class="product-card">
+                            <a href="product.html?id=${product.id}" style="text-decoration: none; color: inherit;">
                                 <div class="image-box">
                                     <img src="${product.image}" alt="${product.name}">
                                 </div>
@@ -153,38 +146,51 @@ document.addEventListener("DOMContentLoaded", () => {
                                         <span class="price">${product.price}</span>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     `;
                     productContainer.innerHTML += productHTML;
                 });
             } else {
-                productContainer.innerHTML = "<p style='width: 100%; text-align: center; margin-top: 2rem; color: #666;'>No products found matching your selection.</p>";
+                productContainer.innerHTML = "<p style='width: 100%; text-align: center; margin-top: 2rem; color: #666;'>No products found.</p>";
             }
         }
 
-        displayProducts('default');
+        // Initial draw of the products
+        renderProducts(displayProducts);
 
-        if(sortSelect) {
+        // Sorting Logic
+        const sortSelect = document.getElementById('sortSelect');
+        if (sortSelect) {
             sortSelect.addEventListener('change', (e) => {
-                displayProducts(e.target.value);
+                const sortValue = e.target.value;
+                let sortedList = [...displayProducts]; // Copy the array
+
+                if (sortValue === 'low-high') {
+                    sortedList.sort((a, b) => a.priceVal - b.priceVal);
+                } else if (sortValue === 'high-low') {
+                    sortedList.sort((a, b) => b.priceVal - a.priceVal);
+                } else if (sortValue === 'az') {
+                    sortedList.sort((a, b) => a.name.localeCompare(b.name));
+                }
+
+                renderProducts(sortedList); // Re-draw the screen
             });
         }
     }
 
+
     // ==========================================
-    // 4. NEW: SINGLE PRODUCT PAGE LOGIC
+    // 5. SINGLE PRODUCT PAGE LOGIC (WITH START & END DATES)
     // ==========================================
     const singleProductContainer = document.getElementById('single-product-container');
     
     if (singleProductContainer) {
         const urlParams = new URLSearchParams(window.location.search);
-        const productId = parseInt(urlParams.get('id')); 
-
+        const productId = parseInt(urlParams.get('id'));
         const product = products.find(p => p.id === productId);
 
         if (product) {
-           
             singleProductContainer.innerHTML = `
                 <div class="product-img-full">
                     <img src="${product.image}" alt="${product.name}">
@@ -194,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <a href="marketplace.html?category=${product.category}" class="breadcrumb">< Back to ${product.category}</a>
                     
                     <h1 class="detail-title">${product.name}</h1>
-                    <div class="detail-price">${product.price}</div>
+                    <div class="detail-price" id="display-price">${product.price} <span style="font-size: 1rem; color: #666;">/ day</span></div>
 
                     <div class="detail-accordion">
                         <details open>
@@ -212,8 +218,93 @@ document.addEventListener("DOMContentLoaded", () => {
                         <button class="size-btn">${product.size}</button>
                     </div>
 
+                    <div class="rental-section">
+                        <div style="display: flex; gap: 40px;">
+                            <div style="flex: 1;">
+                                <label for="start-date" class="size-label">Start Date:</label>
+                                <input type="date" id="start-date" class="date-input">
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="end-date" class="size-label">End Date:</label>
+                                <input type="date" id="end-date" class="date-input">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 30px;">
+                            <p style="font-size: 1.1rem; margin-bottom: 10px; color: #333;">
+                                Borrowing for: <strong id="days-indicator">1</strong> day(s)
+                            </p>
+                            <button id="rent-btn" class="submit-btn" style="width: 100%; margin: 0;">Rent Now - ${product.price}</button>
+                        </div>
+                    </div>
                 </div>
             `;
+
+            const startDateInput = document.getElementById('start-date');
+            const endDateInput = document.getElementById('end-date');
+            const daysIndicator = document.getElementById('days-indicator');
+            const rentBtn = document.getElementById('rent-btn');
+
+            // 1. Set the minimum start date to TODAY
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.min = today;
+
+            // 2. Function to calculate days and update price
+            function updateRentalDetails() {
+                const start = startDateInput.value ? new Date(startDateInput.value) : null;
+                const end = endDateInput.value ? new Date(endDateInput.value) : null;
+                
+                let days = 1; // Default to 1 day
+
+                if (start && end) {
+                    // Calculate the difference in milliseconds, then convert to days
+                    const timeDiff = end.getTime() - start.getTime();
+                    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    
+                    // If same day, count as 1 day. Otherwise, use the difference.
+                    if (diffDays >= 0) {
+                        days = diffDays === 0 ? 1 : diffDays; 
+                    }
+                }
+
+                // Update the text indicator on the screen
+                daysIndicator.textContent = days;
+                
+                // Calculate and format the total price
+                const totalPrice = product.priceVal * days;
+                const formattedPrice = "₱" + totalPrice.toLocaleString();
+                rentBtn.textContent = `Rent Now - ${formattedPrice}`;
+                
+                return { days, formattedPrice };
+            }
+
+            // 3. When Start Date changes, make sure End Date can't be earlier than Start Date
+            startDateInput.addEventListener('change', () => {
+                if (startDateInput.value) {
+                    endDateInput.min = startDateInput.value;
+                    
+                    // If the current end date is now before the new start date, reset it
+                    if (endDateInput.value && endDateInput.value < startDateInput.value) {
+                        endDateInput.value = startDateInput.value;
+                    }
+                }
+                updateRentalDetails();
+            });
+
+            // 4. Update calculations when End Date changes
+            endDateInput.addEventListener('change', updateRentalDetails);
+
+            // 5. Action when rent button is clicked
+            rentBtn.addEventListener('click', () => {
+                if (!startDateInput.value || !endDateInput.value) {
+                    alert("Please select both a Start Date and an End Date before continuing!");
+                    return;
+                }
+
+                const rentalInfo = updateRentalDetails();
+                alert(`Awesome! You booked the ${product.name} from ${startDateInput.value} to ${endDateInput.value} (${rentalInfo.days} days). Total: ${rentalInfo.formattedPrice}`);
+            });
+
         } else {
             singleProductContainer.innerHTML = "<p>Product not found.</p>";
         }
