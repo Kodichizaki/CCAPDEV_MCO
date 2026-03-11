@@ -1,140 +1,56 @@
-document.addEventListener("DOMContentLoaded", () => {
+
+
+document.addEventListener("DOMContentLoaded", async () => {
 
     // ==========================================
-    // GLOBAL DATABASE
+    // FETCH GLOBAL DATABASE FROM SERVER
     // ==========================================
-    const products = [
-        { 
-            id: 1, 
-            name: "Batman Shirt", 
-            category: "men", 
-            price: "₱1,000", 
-            priceVal: 1000, 
-            size: "S", 
-            image: "images/men/batman2.jpg", 
-            description: "Channel the Dark Knight with this premium cotton graphic tee."
-        },
-        { 
-            id: 2, 
-            name: "Prom Suit", 
-            category: "men", 
-            price: "₱4,000", 
-            priceVal: 4000, 
-            size: "S", 
-            image: "images/men/promsuit.jpg",
-            description: "Stand out at your next formal event. This slim-fit flower stitched tuxedo includes jacket, trousers, and a black inner shirt."
-        },
-        { 
-            id: 3, 
-            name: "Mens Summer Shirt", 
-            category: "men", 
-            price: "₱2,500", 
-            priceVal: 2500, 
-            size: "S", 
-            image: "images/men/mensshirt2.jpg",
-            description: "Stay cool in this breathable button-down. Perfect for beach weddings or casual summer days."
-        },
-        { 
-            id: 4, 
-            name: "Filipiniana Dress", 
-            category: "women", 
-            price: "₱3,400", 
-            priceVal: 3400, 
-            size: "S", 
-            image: "images/women/filipiniana2.jpg",
-            description: "Elegant traditional Filipiniana dress perfect for formal events."
-        },
-        { 
-            id: 5, 
-            name: "Shrek Shirt", 
-            category: "casual", 
-            price: "₱1000", 
-            priceVal: 1000, 
-            size: "L", 
-            image: "images/casual/shrek2.jpg",
-            description: "Get out of my swamp! Casual and comfortable graphic tee."
-        },
-        { 
-            id: 6, 
-            name: "Grimace Costume", 
-            category: "costumes", 
-            price: "₱4,000", 
-            priceVal: 4000, 
-            size: "S", 
-            image: "images/costumes/grimace.jpg",
-            description: "Be the life of the party with this vibrant purple costume."
-        },
-        { 
-            id: 7, 
-            name: "Womens Suit", 
-            category: "women", 
-            price: "₱3,500", 
-            priceVal: 3500, 
-            size: "M", 
-            image: "images/women/wsuit.jpg",
-            description: "Effortlessly chic, this modern two-piece suit blends structure with comfort. The sleek blazer and fitted trousers create a versatile look that transitions perfectly from day to night"
-        },
-        { 
-            id: 8, 
-            name: "Louis Vuitton Tank top", 
-            category: "women", 
-            price: "₱15,500", 
-            priceVal: 15500, 
-            size: "XS", 
-            image: "images/women/lvtank.jpg",
-            description: "This tank top is spun from a soft, flexible wool-blend knit with a lightly spongy texture. It is crafted in a fitted shape with a flattering V-neckline and a wide ribbed hem to accentuate the waistline, while the chest is embellished with a metallic LV Twist charm for a sporty signature finish."
-        },
-        { 
-            id: 9, 
-            name: "Gray Suit", 
-            category: "formal", 
-            price: "₱5,000", 
-            priceVal: 5000, 
-            size: "M", 
-            image: "images/formalmen1.jpg",
-            description: "Best for: Executive meetings, formal events, weddings, and evening wear."
-        },
-        { 
-            id: 10, 
-            name: "Wedding Gown", 
-            category: "formal", 
-            price: "₱70,000", 
-            priceVal: 70000, 
-            size: "S", 
-            image: "images/formalwmen1.jpg",
-            description: "Featuring a V-neck, sleeveless design, this dress is made of soft lace and tulle, ideal for beach or outdoor weddings."
-        },
-        { 
-            id: 11, 
-            name: "Black Tie set", 
-            category: "formal", 
-            price: "₱10,000", 
-            priceVal: 10000, 
-            size: "XL", 
-            image: "images/formalmen2.jpg",
-            description: "Elevate your formal wardrobe with this timeless black tuxedo. Featuring classic peak lapels with rich satin facing, this suit offers an impeccable fit for weddings, galas, or awards nights."
-        },
-        { 
-            id: 12, 
-            name: "Gucci Canvas bucket hat", 
-            category: "accessories", 
-            price: "₱30,000", 
-            priceVal: 30000, 
-            size: "S", 
-            image: "images/accessories/guccihat.jpg",
-            description: "In the Fall Winter 2025 collection, signature GG motif returns in soft shades. Crafted from cotton canvas, this bucket hat showcases the GG canvas with a bordeaux leather trim"
-        },
-        { 
-            id: 13, 
-            name: "Gucci vittoria bootie", 
-            category: "footwear", 
-            price: "₱57,000", 
-            priceVal: 57000, 
-            size: "39", 
-            image: "images/footwear/gucciboot.jpg",
-            description: "Vittoria includes a bootie silhouette in the La Famiglia collection, highlighting a sleek elongated toe with Horsebit and cone-shaped heel. Crafted from soft leather, it is complete with a full side zip closure for a perfect fit and effortless elegance, which inspires its name."
-        }
-    ];
+    let products = []; // Create an empty list first
+    
+    try {
+        // Go to our new Node.js server and ask for the clothes
+        const response = await fetch('http://localhost:3000/api/products');
+        
+        // Convert the server's response into a real JavaScript array
+        products = await response.json(); 
+        
+        console.log("Successfully fetched products from backend:", products);
+    } catch (error) {
+        console.error("Error loading products:", error);
+        alert("Could not connect to the server. Make sure your Node.js backend is running!");
+        return; // Stop the script if the server is offline
+    }
+   
+   
+    // ==========================================
+    // CART SYSTEM (Using LocalStorage)
+    // ==========================================
+    
+    // This function grabs the current cart from memory, or creates an empty one
+    function getCart() {
+        const cart = localStorage.getItem('hiramph_cart');
+        return cart ? JSON.parse(cart) : [];
+    }
+
+    // This is the function your "Rent Now" button calls!
+    window.addToCart = function(productId, rentalDetails) {
+        const cart = getCart();
+        
+        // Combine the product ID and the dates into one object
+        const cartItem = {
+            productId: productId,
+            startDate: rentalDetails.startDate,
+            endDate: rentalDetails.endDate,
+            days: rentalDetails.days,
+            totalPrice: rentalDetails.totalPrice
+        };
+
+        // Add it to the cart array and save it back to the browser's memory
+        cart.push(cartItem);
+        localStorage.setItem('hiramph_cart', JSON.stringify(cart));
+        
+        return true; // Tells the button it was successful
+    };
 
     // Temporary Users
     const users = [
@@ -361,10 +277,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-       
-
-
-
         // Initial draw of the products
         renderProducts(displayProducts);
 
@@ -573,4 +485,75 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    
+
 });
+
+// ==========================================
+    // SHOPPING CART PAGE LOGIC
+    // ==========================================
+    const cartContainer = document.getElementById('cart-container');
+
+    if (cartContainer) {
+        const cart = getCart(); // Get the saved items
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = `
+                <div style="text-align: center; padding: 50px;">
+                    <h2 style="margin-bottom: 20px;">Your Cart is Empty</h2>
+                    <p style="color: #666; margin-bottom: 30px;">Looks like you haven't added any clothes to rent yet.</p>
+                    <a href="marketplace.html?category=all" class="submit-btn" style="text-decoration: none; display: inline-block;">Browse Marketplace</a>
+                </div>
+            `;
+        } else {
+            cartContainer.innerHTML = '<h2>Your Cart</h2>';
+            let grandTotal = 0;
+
+            // Loop through everything in the cart
+            cart.forEach((item, index) => {
+                // Find the full product details from the main database using the saved ID
+                const product = products.find(p => p.id === item.productId);
+                
+                if (product) {
+                    // Turn "₱4,000" back into a raw number for the Grand Total math
+                    const priceNumber = parseInt(item.totalPrice.replace(/[^0-9.-]+/g,""));
+                    grandTotal += priceNumber;
+
+                    // Draw the HTML for this specific item in the cart
+                    const cartItemHTML = `
+                        <div class="cart-card">
+                            <img src="${product.image}" alt="${product.name}" style="width: 100px; height: 120px; object-fit: cover; border-radius: 8px;">
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 5px 0;">${product.name}</h3>
+                                <p style="margin: 0; color: #666; font-size: 0.9rem;">Size: ${product.size}</p>
+                                <p style="margin: 5px 0 0 0; font-size: 0.9rem;">
+                                    <strong>Dates:</strong> ${item.startDate} to ${item.endDate} (${item.days} Days)
+                                </p>
+                            </div>
+                            <div style="text-align: right;">
+                                <h3 style="margin: 0 0 10px 0;">${item.totalPrice}</h3>
+                                <button onclick="removeFromCart(${index})" style="background: none; border: none; color: red; cursor: pointer; text-decoration: underline;">Remove</button>
+                            </div>
+                        </div>
+                    `;
+                    cartContainer.innerHTML += cartItemHTML;
+                }
+            });
+
+            // Add the Checkout Section with the Grand Total
+            cartContainer.innerHTML += `
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #ddd; text-align: right;">
+                    <h2 style="margin-bottom: 20px;">Grand Total: ₱${grandTotal.toLocaleString()}</h2>
+                    <button class="submit-btn" style="width: 250px;" onclick="alert('Checkout feature coming soon!')">Proceed to Checkout</button>
+                </div>
+            `;
+        }
+    }
+
+    // Function to delete an item from the cart
+    window.removeFromCart = function(index) {
+        let cart = getCart();
+        cart.splice(index, 1); // Remove the specific item
+        localStorage.setItem('hiramph_cart', JSON.stringify(cart)); // Save the updated list
+        window.location.reload(); // Refresh the page to show the changes
+    };
