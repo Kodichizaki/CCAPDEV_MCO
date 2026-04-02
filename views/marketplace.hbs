@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace - HiramPH</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header" id="Home">
+        <div class="container header">
+
+            <div class="header-left">
+                <img src="/images/logo.png" alt="Logo is Here" class="logo-img">
+            </div>
+
+            <div class="header-center">
+                <h1 class="brandname"><a href="/">HiramPH</a></h1>
+            </div>
+
+            <div class="header-right", id="header-right">
+                <nav class="nav">
+                    <a href="/"> Home </a>
+                    <a href="/#About">About </a> 
+                    <a href="/contact">Contact </a> 
+
+                    <span id="prof-area">
+                        <a href="/login" class="login-btn">Login</a>
+                    </span> 
+                </nav>
+            </div>
+        </div>
+    </header>
+
+        <div class="container subheader">
+            <details class="category-dropdown">
+                <summary>Categories <span class="arrow">▼</span></summary>
+                <div class="dropdown-content">
+                    <a href="/marketplace?category=men">Men</a>
+                    <a href="/marketplace?category=women">Women</a>
+                    <a href="/marketplace?category=formal">Formal</a>
+                    <a href="/marketplace?category=casual">Casual</a>
+                    <a href="/marketplace?category=costumes">Costumes</a>
+                    <a href="/marketplace?category=footwear">Footwear</a>
+                    <a href="/marketplace?category=accessories">Accessories</a>
+                </div>
+            </details>
+        </div>
+
+    <div class="container features">
+        <h2 class="section-title" id="category-title">Marketplace</h2>
+        <div class="sort-container">
+            <label for="sortSelect">Sort / Filter:</label>
+            <select id="sortSelect" class="sort-dropdown">
+                <option value="default">Recommended</option>
+                <option value="az">Name: A-Z</option>
+                <option value="low-high">Price: Low to High</option>
+                <option value="high-low">Price: High to Low</option>
+                <option disabled>--- Sizes ---</option>
+                <option value="XS">Size: XS</option>
+                <option value="S">Size: S</option>
+                <option value="M">Size: M</option>
+                <option value="L">Size: L</option>
+                <option value="XL">Size: XL</option>
+                <option value="XXL">Size: XXL</option>
+            </select>
+        </div>
+
+        <div class="scroll-container" id="product-container" style="flex-wrap: wrap; justify-content: center; gap: 20px;">
+    {{#each products}}
+        <div class="product-card">
+            {{!-- Link to the product detail page --}}
+            <a href="/product/{{this.id}}" style="text-decoration: none; color: inherit;">
+                <div class="image-box">
+                    <img src="{{this.image}}" alt="{{this.name}}">
+                </div>
+                <div class="card-details">
+                    <p class="product-name">{{this.name}}</p>
+                    <div class="price-row">
+                        <span>{{this.size}}</span>
+                        <span class="price">{{this.price}}</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {{/each}}
+</div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

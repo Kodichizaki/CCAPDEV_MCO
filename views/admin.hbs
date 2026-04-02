@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - HiramPH</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header class="site-header" id="Home">
+        <div class="container header">
+            <div class="header-left">
+                <img src="/images/logo.png" alt="Logo" class="logo-img">
+            </div>
+            <div class="header-center">
+                <h1 class="brandname"><a href="/">HiramPH</a></h1>
+            </div>
+            <div class="header-right" id="header-right">
+                <nav class="nav">
+                    <a href="/">Home</a>
+                    <a href="/marketplace">Marketplace</a>
+                    <span id="prof-area">
+                        <a href="/login" class="login-btn">Login</a>
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" id="admin-container" style="padding: 40px 0;">
+
+        <!-- Access denied message -->
+        <div id="access-denied" style="display:none; text-align:center; padding: 50px;">
+            <h2 style="color: red;">Access Denied</h2>
+            <p>You must be an admin to view this page.</p>
+            <a href="/" class="submit-btn" style="text-decoration:none; display:inline-block; margin-top:20px;">Go Home</a>
+        </div>
+
+        <!-- Admin content, hidden until verified -->
+        <div id="admin-content" style="display:none;">
+            <h2 class="section-title">Admin Panel</h2>
+
+            <!-- Add New Item -->
+            <div style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin-bottom: 40px;">
+                <h3 style="margin-bottom: 20px;">Add New Clothing Item</h3>
+
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="a-name" class="admin-input" placeholder="e.g. Batman Shirt">
+                </div>
+                <div class="form-group">
+                    <label>Categories</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+                        <label><input type="checkbox" class="cat-check" value="men"> Men</label>
+                        <label><input type="checkbox" class="cat-check" value="women"> Women</label>
+                        <label><input type="checkbox" class="cat-check" value="formal"> Formal</label>
+                        <label><input type="checkbox" class="cat-check" value="casual"> Casual</label>
+                        <label><input type="checkbox" class="cat-check" value="costumes"> Costumes</label>
+                        <label><input type="checkbox" class="cat-check" id="footwear-cat-check" value="footwear"> Footwear</label>
+                        <label><input type="checkbox" class="cat-check" value="accessories"> Accessories</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Price (display)</label>
+                    <input type="text" id="a-price" class="admin-input" placeholder="e.g. ₱2,000">
+                </div>
+
+                <div class="form-group">
+                    <label>Price (number only, for sorting)</label>
+                    <input type="number" id="a-priceval" class="admin-input" placeholder="e.g. 2000">
+                </div>
+
+                <div class="form-group">
+                    <label>Available Sizes</label>
+
+                    <!-- Normal size checkboxes -->
+                    <div id="size-checkboxes" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+                        <label><input type="checkbox" class="size-check" value="XS"> XS</label>
+                        <label><input type="checkbox" class="size-check" value="S"> S</label>
+                        <label><input type="checkbox" class="size-check" value="M"> M</label>
+                        <label><input type="checkbox" class="size-check" value="L"> L</label>
+                        <label><input type="checkbox" class="size-check" value="XL"> XL</label>
+                        <label><input type="checkbox" class="size-check" value="XXL"> XXL</label>
+                    </div>
+
+                    <!-- Footwear number input, hidden by default -->
+                    <div id="footwear-size-box" style="display:none; margin-top: 8px;">
+                        <input type="number" id="footwear-size-input" class="admin-input" placeholder="Enter footwear size (e.g. 39)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Item Image</label>
+                    <input type="file" id="a-image-file" class="admin-input" accept="image/*">
+                    <div id="image-preview-box" style="display:none; margin-top: 10px;">
+                        <p style="color: #666; font-size: 0.9rem;">Preview:</p>
+                        <img id="image-preview" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
+                    </div>
+                    <p id="image-upload-msg" style="font-size: 0.85rem; color: #666; margin-top: 6px;"></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="a-description" class="admin-input" rows="3" placeholder="Enter description..."></textarea>
+                </div>
+
+                <button class="submit-btn" id="addItemBtn" style="margin-top: 10px;">Add Item</button>
+                <p id="add-msg" style="margin-top: 10px; color: green;"></p>
+            </div>
+
+            <!-- Current Inventory -->
+            <h3 style="margin-bottom: 20px;">Current Inventory</h3>
+            <div id="inventory-list"></div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

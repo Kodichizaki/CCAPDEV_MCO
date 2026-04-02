@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - HiramPH</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header class="site-header" id="Home">
+        <div class="container header">
+
+            <div class="header-left">
+                <img src="/images/logo.png" alt="Logo is Here" class="logo-img">
+            </div>
+
+            <div class="header-center">
+                <h1 class="brandname"><a href="/">HiramPH</a></h1>
+            </div>
+
+            <div class="header-right", id="header-right">
+                <nav class="nav">
+                    <a href="/"> Home </a>
+                    <a href="/#About">About </a> 
+                    <a href="/contact">Contact </a> 
+
+                    <span id="prof-area">
+                        <a href="/login" class="login-btn">Login</a>
+                    </span> 
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container product-page-wrapper">
+        <div class="product-img-full">
+            <img src="{{item.image}}" alt="{{item.name}}">
+        </div>
+
+
+        <div class="product-info-side">
+            <a href="/marketplace" class="breadcrumb">← Back to Marketplace</a>
+            
+            <h1 class="detail-title">{{item.name}}</h1>
+            <p class="detail-price">{{item.price}} <span style="font-size: 1rem; color: #666;">/ day</span></p>
+
+            <div class="detail-accordion">
+                <details open>
+                    <summary>Description</summary>
+                    <p>{{item.description}}</p>
+                </details>
+                <details>
+                    <summary>Size & Measurements</summary>
+                    <p>Available Size: <strong>{{item.size}}</strong></p>
+                </details>
+            </div>
+
+            <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px;" id="rent-section">
+                <button class="add-cart-btn" id="rentBtn"
+                    data-id="{{item.id}}"
+                    data-name="{{item.name}}"
+                    data-price="{{item.price}}"
+                    data-priceval="{{item.priceVal}}"
+                    data-image="{{item.image}}"
+                    data-size="{{item.size}}">
+                    Rent This Item
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>
