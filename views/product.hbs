@@ -56,18 +56,26 @@
             </div>
 
             <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px;" id="rent-section">
-                <button class="add-cart-btn" id="rentBtn"
-                    data-id="{{item.id}}"
-                    data-name="{{item.name}}"
-                    data-price="{{item.price}}"
-                    data-priceval="{{item.priceVal}}"
-                    data-image="{{item.image}}"
-                    data-size="{{item.size}}">
-                    Rent This Item
-                </button>
-            </div>
-        </div>
-    </div>
+                <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+                    <div>
+                        <label for="startDate" style="display: block; margin-bottom: 5px;"><strong>Pickup Date:</strong></label>
+                        <input type="date" id="startDate" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label for="endDate" style="display: block; margin-bottom: 5px;"><strong>Return Date:</strong></label>
+                            <input type="date" id="endDate" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                            </div>
+                            </div>
+                            <button class="add-cart-btn" id="rentBtn"
+                            data-id="{{item.id}}"
+                            data-name="{{item.name}}"
+                            data-price="{{item.price}}"
+                            data-priceval="{{item.priceVal}}"
+                            data-image="{{item.image}}"
+                            data-size="{{item.size}}">
+                            Rent This Item
+                            </button>
+                            </div>
 
     <script src="/script.js"></script>
 </body>
