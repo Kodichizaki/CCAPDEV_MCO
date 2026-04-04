@@ -1,12 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const Clothing = require('./models/Clothing'); 
-const User = require('./models/User');
 const bcrypt = require('bcrypt');
-const Cart = require('./models/Cart');
 const multer = require('multer');
 const path = require('path');
+
+// Models (Fixed paths!)
+const Clothing = require('./models/Clothing'); 
+const User = require('./models/User');
+const Cart = require('./models/Cart');
 
 const app = express();
 const PORT = 3000;
@@ -26,15 +28,6 @@ const upload = multer({ storage });
 app.use(cors());
 app.use(express.json());
 
-// Uploading Images
-app.post('/admin/upload-image', upload.single('image'), (req, res) => {
-    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-    
-    // Return the path that can be used in the database
-    const imagePath = `/images/uploads/${req.file.filename}`;
-    res.json({ imagePath });
-});
-
 // Set up Handlebars and the Public folder
 app.set('view engine', 'hbs'); 
 app.use(express.static('public')); 
@@ -45,6 +38,14 @@ mongoose.connect('mongodb://127.0.0.1:27017/hiramph_db')
   .catch((err) => console.error('❌ Database error:', err));
 
 // --- ALL WEBSITE ROUTES ---
+
+// Uploading Images
+app.post('/admin/upload-image', upload.single('image'), (req, res) => {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    
+    const imagePath = `/images/uploads/${req.file.filename}`;
+    res.json({ imagePath });
+});
 
 // Home Page
 app.get('/', (req, res) => {
@@ -62,7 +63,6 @@ app.get('/marketplace', async (req, res) => {
 
         const filteredClothes = await Clothing.find(filter);
 
-        // If request wants JSON (from admin panel), return JSON
         if (req.query.json === 'true') {
             return res.json(filteredClothes);
         }
@@ -74,7 +74,7 @@ app.get('/marketplace', async (req, res) => {
     }
 });
 
-//Carts
+// Carts
 app.get('/cart/data', async (req, res) => {
     try {
         const userId = req.query.userId;
@@ -98,10 +98,8 @@ app.post('/cart/add', async (req, res) => {
         let cart = await Cart.findOne({ userId });
 
         if (!cart) {
-            // Create a new cart if user doesn't have one
             cart = new Cart({ userId, items: [item] });
         } else {
-            // Check if item already exists in cart
             const existing = cart.items.find(i => i.clothingId === item.clothingId);
             if (existing) {
                 existing.quantity += 1;
@@ -132,6 +130,27 @@ app.delete('/cart/remove', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// CHECKOUT ROUTE
+app.post('/cart/checkout', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        
+        const cart = await Cart.findOne({ userId });
+        
+        if (!cart || cart.items.length === 0) {
+            return res.status(400).json({ message: "Your cart is already empty!" });
+        }
+
+        cart.items = [];
+        await cart.save();
+
+        res.json({ message: "Checkout successful! Thank you for renting with HiramPH!" });
+    } catch (err) {
+        console.error("Backend Checkout Error:", err);
+        res.status(500).json({ message: "Server error during checkout" });
     }
 });
 
@@ -176,11 +195,9 @@ app.post('/signup', async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        // Check if email already exists
         const existing = await User.findOne({ email });
         if (existing) return res.status(400).json({ message: 'Email already in use' });
 
-        // Hash the password before saving
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ name, email, password: hashedPassword });
         await newUser.save();
@@ -200,7 +217,6 @@ app.get('/cart', (req, res) => {
 // dynamic route for a single product
 app.get('/product/:id', async (req, res) => {
     try {
-        
         const productId = parseInt(req.params.id);
         const product = await Clothing.findOne({ id: productId });
 
@@ -215,12 +231,7 @@ app.get('/product/:id', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 HiramPH Server running on http://localhost:${PORT}`);
-});
-
 // Admin Routes
-
 app.get('/admin', async (req, res) => {
     res.render('admin');
 });
@@ -230,7 +241,6 @@ app.post('/admin/add-item', async (req, res) => {
     try {
         const { name, category, price, priceVal, size, image, description } = req.body;
 
-        // Get the highest existing id and increment it
         const lastItem = await Clothing.findOne().sort({ id: -1 });
         const newId = lastItem ? lastItem.id + 1 : 1;
 
@@ -263,4 +273,9 @@ app.delete('/admin/delete-item/:id', async (req, res) => {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
+});
+
+// ALWAYS PUT APP.LISTEN AT THE VERY BOTTOM
+app.listen(PORT, () => {
+    console.log(`🚀 HiramPH Server running on http://localhost:${PORT}`);
 });
