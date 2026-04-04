@@ -4,21 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketplace - HiramPH</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <header class="site-header" id="Home">
         <div class="container header">
-
             <div class="header-left">
                 <img src="/images/logo.png" alt="Logo is Here" class="logo-img">
             </div>
-
             <div class="header-center">
                 <h1 class="brandname"><a href="/">HiramPH</a></h1>
             </div>
-
-            <div class="header-right", id="header-right">
+            <div class="header-right" id="header-right">
                 <nav class="nav">
                     <a href="/"> Home </a>
                     <a href="/#About">About </a> 
@@ -32,61 +29,74 @@
         </div>
     </header>
 
-        <div class="container subheader">
-            <details class="category-dropdown">
-                <summary>Categories <span class="arrow">▼</span></summary>
-                <div class="dropdown-content">
-                    <a href="/marketplace?category=men">Men</a>
-                    <a href="/marketplace?category=women">Women</a>
-                    <a href="/marketplace?category=formal">Formal</a>
-                    <a href="/marketplace?category=casual">Casual</a>
-                    <a href="/marketplace?category=costumes">Costumes</a>
-                    <a href="/marketplace?category=footwear">Footwear</a>
-                    <a href="/marketplace?category=accessories">Accessories</a>
-                </div>
-            </details>
-        </div>
+    <div class="container" style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px auto; border: 1px solid #ddd;">
+        <form action="/marketplace" method="GET" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            
+            <div style="flex: 1; min-width: 200px;">
+                <input type="text" name="search" id="searchInput" placeholder="Search clothes..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
 
-    <div class="container features">
-        <h2 class="section-title" id="category-title">Marketplace</h2>
-        <div class="sort-container">
-            <label for="sortSelect">Sort / Filter:</label>
-            <select id="sortSelect" class="sort-dropdown">
-                <option value="default">Recommended</option>
-                <option value="az">Name: A-Z</option>
-                <option value="low-high">Price: Low to High</option>
-                <option value="high-low">Price: High to Low</option>
-                <option disabled>--- Sizes ---</option>
-                <option value="XS">Size: XS</option>
-                <option value="S">Size: S</option>
-                <option value="M">Size: M</option>
-                <option value="L">Size: L</option>
-                <option value="XL">Size: XL</option>
-                <option value="XXL">Size: XXL</option>
-            </select>
-        </div>
+            <div>
+                <select name="category" id="categorySelect" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="all">All Categories</option>
+                    <option value="men">Men's Wear</option>
+                    <option value="women">Women's Wear</option>
+                    <option value="costumes">Cosplay & Costumes</option>
+                    <option value="footwear">Footwear</option>
+                    <option value="accessories">Accessories</option>
+                </select>
+            </div>
 
-        <div class="scroll-container" id="product-container" style="flex-wrap: wrap; justify-content: center; gap: 20px;">
-    {{#each products}}
-        <div class="product-card">
-            {{!-- Link to the product detail page --}}
-            <a href="/product/{{this.id}}" style="text-decoration: none; color: inherit;">
-                <div class="image-box">
-                    <img src="{{this.image}}" alt="{{this.name}}">
-                </div>
-                <div class="card-details">
-                    <p class="product-name">{{this.name}}</p>
-                    <div class="price-row">
-                        <span>{{this.size}}</span>
-                        <span class="price">{{this.price}}</span>
-                    </div>
-                </div>
-            </a>
-        </div>
-    {{/each}}
-</div>
+            <div>
+                <select name="sort" id="sortSelect" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="default">Sort By...</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name-asc">Name: A to Z</option>
+                    <option value="name-desc">Name: Z to A</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn" style="margin: 0; padding: 10px 20px;">Apply Filters</button>
+            <a href="/marketplace" style="color: #ff4444; font-weight: bold; text-decoration: none; padding: 10px;">Clear</a>
+        </form>
     </div>
+
+    <div class="container scroll-container" id="product-container" style="flex-wrap: wrap; justify-content: center; gap: 20px; display: flex; padding-bottom: 40px;">
+        
+        {{#if products.length}}
+            {{#each products}}
+            <div class="product-card">
+                <a href="/product/{{this.id}}" style="text-decoration: none; color: inherit;">
+                    <div class="image-box">
+                        <img src="{{this.image}}" alt="{{this.name}}">
+                    </div>
+                    <div class="card-details">
+                        <p class="product-name">{{this.name}}</p>
+                        <div class="price-row">
+                            <span>{{this.size}}</span>
+                            <span class="price">{{this.price}}</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {{/each}}
+        {{else}}
+            <div style="text-align: center; padding: 50px; width: 100%;">
+                <h3 style="color: #555;">No items found matching your search.</h3>
+                <p style="color: #888; margin-top: 10px;">Try adjusting your filters or clearing your search!</p>
+            </div>
+        {{/if}}
+
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.get('search')) document.getElementById('searchInput').value = urlParams.get('search');
+        if(urlParams.get('category')) document.getElementById('categorySelect').value = urlParams.get('category');
+        if(urlParams.get('sort')) document.getElementById('sortSelect').value = urlParams.get('sort');
+    </script>
     
-    <script src="script.js"></script>
+    <script src="/script.js"></script>
 </body>
 </html>

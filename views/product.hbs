@@ -3,80 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Details - HiramPH</title>
+    <title>{{item.name}} - HiramPH</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
     <header class="site-header" id="Home">
         <div class="container header">
-
             <div class="header-left">
-                <img src="/images/logo.png" alt="Logo is Here" class="logo-img">
+                <img src="/images/logo.png" alt="Logo" class="logo-img">
             </div>
-
             <div class="header-center">
                 <h1 class="brandname"><a href="/">HiramPH</a></h1>
             </div>
-
-            <div class="header-right", id="header-right">
+            <div class="header-right" id="header-right">
                 <nav class="nav">
-                    <a href="/"> Home </a>
-                    <a href="/#About">About </a> 
-                    <a href="/contact">Contact </a> 
-
+                    <a href="/">Home</a>
+                    <a href="/marketplace">Marketplace</a>
                     <span id="prof-area">
                         <a href="/login" class="login-btn">Login</a>
-                    </span> 
+                    </span>
                 </nav>
             </div>
         </div>
     </header>
 
-    <div class="container product-page-wrapper">
-        <div class="product-img-full">
-            <img src="{{item.image}}" alt="{{item.name}}">
+    <div class="container" style="padding: 40px 0; display: flex; gap: 40px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            <img src="{{item.image}}" alt="{{item.name}}" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
         </div>
 
+        <div style="flex: 1; min-width: 300px;">
+            <h1 style="margin-top: 0; font-size: 2.5rem; color: #333;">{{item.name}}</h1>
+            <p style="font-size: 1.2rem; color: #c8a165; font-weight: bold; margin-bottom: 20px;">{{item.price}} / day</p>
+            <p style="font-size: 1.1rem; color: #555;"><strong>Category:</strong> <span style="text-transform: capitalize;">{{item.category}}</span></p>
+            <p style="font-size: 1.1rem; color: #555;"><strong>Size:</strong> {{item.size}}</p>
+            <p style="font-size: 1rem; color: #666; line-height: 1.6; margin-top: 20px;">{{item.description}}</p>
 
-        <div class="product-info-side">
-            <a href="/marketplace" class="breadcrumb">← Back to Marketplace</a>
-            
-            <h1 class="detail-title">{{item.name}}</h1>
-            <p class="detail-price">{{item.price}} <span style="font-size: 1rem; color: #666;">/ day</span></p>
-
-            <div class="detail-accordion">
-                <details open>
-                    <summary>Description</summary>
-                    <p>{{item.description}}</p>
-                </details>
-                <details>
-                    <summary>Size & Measurements</summary>
-                    <p>Available Size: <strong>{{item.size}}</strong></p>
-                </details>
+            <div id="rent-section" style="margin-top: 30px; background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
+                <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #c8a165; padding-bottom: 10px;">Rent This Item</h3>
+                <div style="display: flex; gap: 15px; margin-bottom: 15px; margin-top: 15px;">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Pickup Date</label>
+                        <input type="text" id="startDate" placeholder="Select Date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Return Date</label>
+                        <input type="text" id="endDate" placeholder="Select Date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                    </div>
+                </div>
+                <button id="rentBtn" class="submit-btn" 
+                    data-id="{{item.id}}" 
+                    data-name="{{item.name}}" 
+                    data-price="{{item.price}}" 
+                    data-priceval="{{item.priceVal}}" 
+                    data-image="{{item.image}}" 
+                    data-size="{{item.size}}"
+                    style="width: 100%; padding: 12px; font-size: 1.1rem; margin-top: 10px;">
+                    Add to Cart
+                </button>
             </div>
+        </div>
+    </div>
 
-            <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px;" id="rent-section">
-                <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
-                    <div>
-                        <label for="startDate" style="display: block; margin-bottom: 5px;"><strong>Pickup Date:</strong></label>
-                        <input type="date" id="startDate" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                        </div>
-                        <div>
-                            <label for="endDate" style="display: block; margin-bottom: 5px;"><strong>Return Date:</strong></label>
-                            <input type="date" id="endDate" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                            </div>
-                            </div>
-                            <button class="add-cart-btn" id="rentBtn"
-                            data-id="{{item.id}}"
-                            data-name="{{item.name}}"
-                            data-price="{{item.price}}"
-                            data-priceval="{{item.priceVal}}"
-                            data-image="{{item.image}}"
-                            data-size="{{item.size}}">
-                            Rent This Item
-                            </button>
-                            </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="/script.js"></script>
 </body>
 </html>
