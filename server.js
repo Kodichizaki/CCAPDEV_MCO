@@ -35,7 +35,7 @@ app.use(express.static('public'));
 
 
 // Connect to MongoDB
-mongoose.connect('mongodb://RedHotChiliPepper:Chili123@ac-fzeyh40-shard-00-00.kytsp3h.mongodb.net:27017,ac-fzeyh40-shard-00-01.kytsp3h.mongodb.net:27017,ac-fzeyh40-shard-00-02.kytsp3h.mongodb.net:27017/?ssl=true&replicaSet=atlas-eynmo9-shard-0&authSource=admin&appName=Cluster0')
+mongoose.connect('mongodb://RedHotChiliPepper:Chili123@ac-aoidhhk-shard-00-00.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-01.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-02.rv7tofc.mongodb.net:27017/?ssl=true&replicaSet=atlas-ab6yup-shard-0&authSource=admin&appName=Cluster')
   .then(() => console.log('✅ Connected to MongoDB!'))
   .catch((err) => console.error('❌ Database error:', err));
 
