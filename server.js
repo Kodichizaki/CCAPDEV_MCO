@@ -349,16 +349,24 @@ app.post('/signup', async (req, res) => {
 
 app.get('/product/:id', async (req, res) => {
     try {
-        const productId = parseInt(req.params.id);
-        const product = await Clothing.findOne({ id: productId });
+        // This handles both custom IDs (like "1") and MongoDB _ids (long strings) safely
+        let product;
+        if (req.params.id.length === 24) {
+            product = await Clothing.findById(req.params.id);
+        } else {
+            const productId = parseInt(req.params.id);
+            product = await Clothing.findOne({ id: productId });
+        }
 
         if (product) {
             res.render('product', { item: product });
         } else {
-            res.status(404).send("Product not found");
+            res.status(404).send("Product not found in database");
         }
     } catch (err) {
-        res.status(500).send("Server Error");
+        console.error("Product Page Error:", err);
+        // This will print the EXACT reason it crashed on your screen!
+        res.status(500).send("Crash Details: " + err.message);
     }
 });
 
