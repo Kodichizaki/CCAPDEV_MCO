@@ -4,7 +4,8 @@ const User = require('./models/User');
 const bcrypt = require('bcrypt');
 
 // 1. Connect to local MongoDB
-mongoose.connect('mongodb://RedHotChiliPepper:Chili123@ac-aoidhhk-shard-00-00.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-01.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-02.rv7tofc.mongodb.net:27017/?ssl=true&replicaSet=atlas-ab6yup-shard-0&authSource=admin&appName=Cluster')
+// FIXED: Added /hiramph_db right before the ? so it goes to the correct database!
+mongoose.connect('mongodb://RedHotChiliPepper:Chili123@ac-aoidhhk-shard-00-00.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-01.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-02.rv7tofc.mongodb.net:27017/hiramph_db?ssl=true&replicaSet=atlas-ab6yup-shard-0&authSource=admin&appName=Cluster')
   .then(() => console.log('✅ Connected to MongoDB for seeding!'))
   .catch((err) => console.error('❌ Connection error:', err));
 
