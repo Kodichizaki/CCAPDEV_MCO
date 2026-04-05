@@ -9,10 +9,14 @@ const path = require('path');
 const Clothing = require('./models/Clothing'); 
 const User = require('./models/User');
 const Cart = require('./models/Cart');
-const Order = require('./models/Order'); // <--- NEW ORDER MODEL
+const Order = require('./models/Order');
 
 const app = express();
-const PORT = 3000;
+
+// ==========================================
+// RENDER UPGRADE: Dynamic Port Assignment
+// ==========================================
+const PORT = process.env.PORT || 3000;
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -34,10 +38,16 @@ app.set('view engine', 'hbs');
 app.use(express.static('public')); 
 
 
-// Connect to MongoDB
-mongoose.connect('mongodb://RedHotChiliPepper:Chili123@ac-aoidhhk-shard-00-00.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-01.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-02.rv7tofc.mongodb.net:27017/?ssl=true&replicaSet=atlas-ab6yup-shard-0&authSource=admin&appName=Cluster')
+// ==========================================
+// RENDER UPGRADE: MongoDB Connection
+// Notice the "/hiramph_db" added right before "?ssl=true"!
+// ==========================================
+const dbURI = process.env.MONGODB_URI || 'mongodb://RedHotChiliPepper:Chili123@ac-fzeyh40-shard-00-00.kytsp3h.mongodb.net:27017,ac-fzeyh40-shard-00-01.kytsp3h.mongodb.net:27017,ac-fzeyh40-shard-00-02.kytsp3h.mongodb.net:27017/hiramph_db?ssl=true&replicaSet=atlas-eynmo9-shard-0&authSource=admin&appName=Cluster0';
+
+mongoose.connect(dbURI)
   .then(() => console.log('✅ Connected to MongoDB!'))
   .catch((err) => console.error('❌ Database error:', err));
+
 
 // ==========================================
 // FETCH BOOKED DATES FOR CALENDAR
@@ -71,7 +81,7 @@ app.get('/api/item/:id/booked-dates', async (req, res) => {
     }
 });
 
-  // --- ALL WEBSITE ROUTES ---
+// --- ALL WEBSITE ROUTES ---
 
 app.post('/admin/upload-image', upload.single('image'), (req, res) => {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
@@ -86,12 +96,12 @@ app.get('/signup', (req, res) => res.render('signup'));
 app.get('/cart', (req, res) => res.render('cart'));
 app.get('/admin', (req, res) => res.render('admin'));
 
-// NEW: Order Page Route
+// Order Page Route
 app.get('/orders', (req, res) => {
     res.render('orders');
 });
 
-// NEW: API to fetch a user's orders
+// API to fetch a user's orders
 app.get('/api/orders', async (req, res) => {
     try {
         const userId = req.query.userId;
@@ -166,7 +176,6 @@ app.get('/marketplace', async (req, res) => {
 
         // 3. Sorting Logic
         let sortOption = {};
-        // Note: We sort by 'priceVal' (the raw number) instead of 'price' (the string with the ₱ symbol)
         if (sort === 'price-asc') sortOption.priceVal = 1;   // Lowest price first
         if (sort === 'price-desc') sortOption.priceVal = -1; // Highest price first
         if (sort === 'name-asc') sortOption.name = 1;        // A to Z
@@ -208,19 +217,13 @@ app.post('/cart/add', async (req, res) => {
     try {
         const { userId, item } = req.body;
 
-        // --- NEW: DATE CONFLICT CHECK ---
-        // 1. Find all orders that contain this specific clothing item
         const existingOrders = await Order.find({ "items.clothingId": item.clothingId });
-
-        // 2. Convert the requested dates into JavaScript Date objects for math comparison
         const reqStart = new Date(item.startDate);
         const reqEnd = new Date(item.endDate);
 
         let isConflict = false;
 
-        // 3. Loop through orders to check for overlapping dates
         for (let order of existingOrders) {
-            // Ignore "Returned" orders because those clothes are safely back in your shop!
             if (order.status === 'Returned') continue; 
 
             for (let orderedItem of order.items) {
@@ -228,31 +231,26 @@ app.post('/cart/add', async (req, res) => {
                     const bookedStart = new Date(orderedItem.startDate);
                     const bookedEnd = new Date(orderedItem.endDate);
 
-                    // OVERLAP LOGIC: If requested start is BEFORE booked end AND requested end is AFTER booked start
                     if (reqStart <= bookedEnd && reqEnd >= bookedStart) {
                         isConflict = true;
                         break;
                     }
                 }
             }
-            if (isConflict) break; // Stop checking if we already found a conflict
+            if (isConflict) break; 
         }
 
-        // 4. Block the user if the dates overlap
         if (isConflict) {
             return res.status(400).json({ 
                 message: 'Sorry! This item is already reserved for those dates. Please choose a different timeframe.' 
             });
         }
-        // --- END OF DATE CONFLICT CHECK ---
 
-        // If dates are clear, proceed with adding to cart normally
         let cart = await Cart.findOne({ userId });
         if (!cart) {
             cart = new Cart({ userId, items: [] });
         }
 
-        // Add item to the cart array
         cart.items.push({ ...item, quantity: 1 });
         await cart.save();
 
@@ -279,7 +277,6 @@ app.delete('/cart/remove', async (req, res) => {
     }
 });
 
-// UPDATED CHECKOUT ROUTE
 app.post('/cart/checkout', async (req, res) => {
     try {
         const { userId } = req.body;
@@ -289,13 +286,11 @@ app.post('/cart/checkout', async (req, res) => {
             return res.status(400).json({ message: "Your cart is already empty!" });
         }
 
-        // 1. Calculate the grand total of the cart
         let total = 0;
         cart.items.forEach(item => {
             total += (item.priceVal * item.quantity);
         });
 
-        // 2. Create the permanent Order record
         const newOrder = new Order({
             userId: userId,
             items: cart.items,
@@ -303,7 +298,6 @@ app.post('/cart/checkout', async (req, res) => {
         });
         await newOrder.save();
 
-        // 3. Empty the cart now that the order is safely saved
         cart.items = [];
         await cart.save();
 
@@ -313,7 +307,6 @@ app.post('/cart/checkout', async (req, res) => {
         res.status(500).json({ message: "Server error during checkout" });
     }
 });
-
 
 app.post('/login', async (req, res) => {
     try {
@@ -346,10 +339,11 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-
+// ==========================================
+// UPGRADED PRODUCT ROUTE
+// ==========================================
 app.get('/product/:id', async (req, res) => {
     try {
-        // This handles both custom IDs (like "1") and MongoDB _ids (long strings) safely
         let product;
         if (req.params.id.length === 24) {
             product = await Clothing.findById(req.params.id);
@@ -365,7 +359,6 @@ app.get('/product/:id', async (req, res) => {
         }
     } catch (err) {
         console.error("Product Page Error:", err);
-        // This will print the EXACT reason it crashed on your screen!
         res.status(500).send("Crash Details: " + err.message);
     }
 });
@@ -402,10 +395,8 @@ app.delete('/admin/delete-item/:id', async (req, res) => {
 // ADMIN ORDER MANAGEMENT
 // ==========================================
 
-// 1. Fetch ALL orders for the Admin Panel
 app.get('/api/admin/orders', async (req, res) => {
     try {
-        // .populate() is magic: it looks at the userId, goes to the User database, and grabs their name & email!
         const orders = await Order.find().populate('userId', 'name email').sort({ orderDate: -1 });
         res.json(orders);
     } catch (err) {
@@ -414,7 +405,6 @@ app.get('/api/admin/orders', async (req, res) => {
     }
 });
 
-// 2. Update the status of a specific order
 app.put('/api/admin/orders/:id/status', async (req, res) => {
     try {
         const { status } = req.body;
@@ -426,7 +416,5 @@ app.put('/api/admin/orders/:id/status', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 HiramPH Server running on http://localhost:${PORT}`);
+    console.log(`🚀 HiramPH Server running on port ${PORT}`);
 });
-
-//hello
