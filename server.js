@@ -9,13 +9,9 @@ const path = require('path');
 const Clothing = require('./models/Clothing'); 
 const User = require('./models/User');
 const Cart = require('./models/Cart');
-const Order = require('./models/Order');
+const Order = require('./models/Order'); // <--- NEW ORDER MODEL
 
 const app = express();
-
-// ==========================================
-// RENDER UPGRADE: Dynamic Port Assignment
-// ==========================================
 const PORT = process.env.PORT || 3000;
 
 const storage = multer.diskStorage({
@@ -38,16 +34,12 @@ app.set('view engine', 'hbs');
 app.use(express.static('public')); 
 
 
-// ==========================================
-// THE "SEPARATE ENVIRONMENTS" FIX
-// Render uses the Cloud. Your PC uses Local Compass!
-// ==========================================
+// Connect to MongoDB
 const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/hiramph_db';
 
 mongoose.connect(dbURI)
   .then(() => console.log('✅ Connected to MongoDB!'))
   .catch((err) => console.error('❌ Database error:', err));
-
 
 // ==========================================
 // FETCH BOOKED DATES FOR CALENDAR
@@ -81,7 +73,7 @@ app.get('/api/item/:id/booked-dates', async (req, res) => {
     }
 });
 
-// --- ALL WEBSITE ROUTES ---
+  // --- ALL WEBSITE ROUTES ---
 
 app.post('/admin/upload-image', upload.single('image'), (req, res) => {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
@@ -96,12 +88,12 @@ app.get('/signup', (req, res) => res.render('signup'));
 app.get('/cart', (req, res) => res.render('cart'));
 app.get('/admin', (req, res) => res.render('admin'));
 
-// Order Page Route
+// NEW: Order Page Route
 app.get('/orders', (req, res) => {
     res.render('orders');
 });
 
-// API to fetch a user's orders
+// NEW: API to fetch a user's orders
 app.get('/api/orders', async (req, res) => {
     try {
         const userId = req.query.userId;
@@ -176,6 +168,7 @@ app.get('/marketplace', async (req, res) => {
 
         // 3. Sorting Logic
         let sortOption = {};
+        // Note: We sort by 'priceVal' (the raw number) instead of 'price' (the string with the ₱ symbol)
         if (sort === 'price-asc') sortOption.priceVal = 1;   // Lowest price first
         if (sort === 'price-desc') sortOption.priceVal = -1; // Highest price first
         if (sort === 'name-asc') sortOption.name = 1;        // A to Z
@@ -217,13 +210,19 @@ app.post('/cart/add', async (req, res) => {
     try {
         const { userId, item } = req.body;
 
+        // --- NEW: DATE CONFLICT CHECK ---
+        // 1. Find all orders that contain this specific clothing item
         const existingOrders = await Order.find({ "items.clothingId": item.clothingId });
+
+        // 2. Convert the requested dates into JavaScript Date objects for math comparison
         const reqStart = new Date(item.startDate);
         const reqEnd = new Date(item.endDate);
 
         let isConflict = false;
 
+        // 3. Loop through orders to check for overlapping dates
         for (let order of existingOrders) {
+            // Ignore "Returned" orders because those clothes are safely back in your shop!
             if (order.status === 'Returned') continue; 
 
             for (let orderedItem of order.items) {
@@ -231,26 +230,31 @@ app.post('/cart/add', async (req, res) => {
                     const bookedStart = new Date(orderedItem.startDate);
                     const bookedEnd = new Date(orderedItem.endDate);
 
+                    // OVERLAP LOGIC: If requested start is BEFORE booked end AND requested end is AFTER booked start
                     if (reqStart <= bookedEnd && reqEnd >= bookedStart) {
                         isConflict = true;
                         break;
                     }
                 }
             }
-            if (isConflict) break; 
+            if (isConflict) break; // Stop checking if we already found a conflict
         }
 
+        // 4. Block the user if the dates overlap
         if (isConflict) {
             return res.status(400).json({ 
                 message: 'Sorry! This item is already reserved for those dates. Please choose a different timeframe.' 
             });
         }
+        // --- END OF DATE CONFLICT CHECK ---
 
+        // If dates are clear, proceed with adding to cart normally
         let cart = await Cart.findOne({ userId });
         if (!cart) {
             cart = new Cart({ userId, items: [] });
         }
 
+        // Add item to the cart array
         cart.items.push({ ...item, quantity: 1 });
         await cart.save();
 
@@ -277,6 +281,7 @@ app.delete('/cart/remove', async (req, res) => {
     }
 });
 
+// UPDATED CHECKOUT ROUTE
 app.post('/cart/checkout', async (req, res) => {
     try {
         const { userId } = req.body;
@@ -286,11 +291,13 @@ app.post('/cart/checkout', async (req, res) => {
             return res.status(400).json({ message: "Your cart is already empty!" });
         }
 
+        // 1. Calculate the grand total of the cart
         let total = 0;
         cart.items.forEach(item => {
             total += (item.priceVal * item.quantity);
         });
 
+        // 2. Create the permanent Order record
         const newOrder = new Order({
             userId: userId,
             items: cart.items,
@@ -298,6 +305,7 @@ app.post('/cart/checkout', async (req, res) => {
         });
         await newOrder.save();
 
+        // 3. Empty the cart now that the order is safely saved
         cart.items = [];
         await cart.save();
 
@@ -307,6 +315,7 @@ app.post('/cart/checkout', async (req, res) => {
         res.status(500).json({ message: "Server error during checkout" });
     }
 });
+
 
 app.post('/login', async (req, res) => {
     try {
@@ -339,27 +348,19 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-// ==========================================
-// UPGRADED PRODUCT ROUTE
-// ==========================================
+
 app.get('/product/:id', async (req, res) => {
     try {
-        let product;
-        if (req.params.id.length === 24) {
-            product = await Clothing.findById(req.params.id);
-        } else {
-            const productId = parseInt(req.params.id);
-            product = await Clothing.findOne({ id: productId });
-        }
+        const productId = parseInt(req.params.id);
+        const product = await Clothing.findOne({ id: productId });
 
         if (product) {
             res.render('product', { item: product });
         } else {
-            res.status(404).send("Product not found in database");
+            res.status(404).send("Product not found");
         }
     } catch (err) {
-        console.error("Product Page Error:", err);
-        res.status(500).send("Crash Details: " + err.message);
+        res.status(500).send("Server Error");
     }
 });
 
@@ -395,8 +396,10 @@ app.delete('/admin/delete-item/:id', async (req, res) => {
 // ADMIN ORDER MANAGEMENT
 // ==========================================
 
+// 1. Fetch ALL orders for the Admin Panel
 app.get('/api/admin/orders', async (req, res) => {
     try {
+        // .populate() is magic: it looks at the userId, goes to the User database, and grabs their name & email!
         const orders = await Order.find().populate('userId', 'name email').sort({ orderDate: -1 });
         res.json(orders);
     } catch (err) {
@@ -405,6 +408,7 @@ app.get('/api/admin/orders', async (req, res) => {
     }
 });
 
+// 2. Update the status of a specific order
 app.put('/api/admin/orders/:id/status', async (req, res) => {
     try {
         const { status } = req.body;
