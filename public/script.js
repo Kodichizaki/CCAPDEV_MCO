@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
     if (profArea && currentUser) {
-        // Updated dropdown to include Account Settings for EVERYONE
         const dropdownLink = currentUser.role === 'admin' 
             ? `<a href="/admin">Admin Panel</a>
                <a href="/settings">Account Settings</a>` 
@@ -190,6 +189,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.location.href = '/login';
                 return;
             }
+            const selectedSizeInput = document.querySelector('input[name="selectedSize"]:checked');
+            if (!selectedSizeInput) {
+                alert('Please select a size!');
+                return;
+            }
 
             const startDate = startDateInput.value;
             const endDate = endDateInput.value;
@@ -209,9 +213,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 price: rentBtn.dataset.price,
                 priceVal: parseFloat(rentBtn.dataset.priceval),
                 image: rentBtn.dataset.image,
-                size: rentBtn.dataset.size,
-                startDate: startDate, 
-                endDate: endDate      
+                size: selectedSizeInput.value, 
+                startDate: startDate,
+                endDate: endDate
             };
 
             const res = await fetch('/cart/add', {
@@ -222,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await res.json();
             if (res.ok) alert('Item added to cart with your selected dates!');
-            else alert(data.message); // This displays the "Sorry! Already reserved!" message
+            else alert(data.message);
         });
     }
 

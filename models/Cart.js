@@ -11,8 +11,6 @@ const cartSchema = new mongoose.Schema({
             image: { type: String, required: true },
             size: { type: String, required: true },
             quantity: { type: Number, default: 1 },
-            
-            // --- NEW: Added Borrow Dates ---
             startDate: { type: String, required: true },
             endDate: { type: String, required: true }
         }

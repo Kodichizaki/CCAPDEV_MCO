@@ -818,3 +818,13 @@
     font-size: 1.3rem;
     margin-top: 10px;
 }
+
+input[type="radio"]:checked + .size-option {
+    border-color: #c8a165;
+    background-color: #c8a165;
+    color: white;
+}
+
+.size-option:hover {
+    border-color: #c8a165;
+}

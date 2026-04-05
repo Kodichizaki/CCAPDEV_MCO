@@ -42,7 +42,22 @@
 
             <div id="rent-section" style="margin-top: 30px; background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
                 <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #c8a165; padding-bottom: 10px;">Rent This Item</h3>
-                <div style="display: flex; gap: 15px; margin-bottom: 15px; margin-top: 15px;">
+
+                <!-- Size Selector -->
+                <div style="margin-bottom: 15px; margin-top: 15px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Select Size</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        {{#each item.size}}
+                            <label style="cursor: pointer;">
+                                <input type="radio" name="selectedSize" value="{{this}}" style="display: none;">
+                                <span class="size-option" style="display: inline-block; padding: 8px 16px; border: 2px solid #ccc; border-radius: 4px; font-weight: bold; transition: all 0.2s;">{{this}}</span>
+                            </label>
+                        {{/each}}
+                    </div>
+                </div>
+
+                <!-- Date Pickers -->
+                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                     <div style="flex: 1;">
                         <label style="display: block; margin-bottom: 5px; font-weight: bold;">Pickup Date</label>
                         <input type="text" id="startDate" placeholder="Select Date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
@@ -52,13 +67,13 @@
                         <input type="text" id="endDate" placeholder="Select Date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
                     </div>
                 </div>
-                <button id="rentBtn" class="submit-btn" 
-                    data-id="{{item.id}}" 
-                    data-name="{{item.name}}" 
-                    data-price="{{item.price}}" 
-                    data-priceval="{{item.priceVal}}" 
-                    data-image="{{item.image}}" 
-                    data-size="{{item.size}}"
+
+                <button id="rentBtn" class="submit-btn"
+                    data-id="{{item.id}}"
+                    data-name="{{item.name}}"
+                    data-price="{{item.price}}"
+                    data-priceval="{{item.priceVal}}"
+                    data-image="{{item.image}}"
                     style="width: 100%; padding: 12px; font-size: 1.1rem; margin-top: 10px;">
                     Add to Cart
                 </button>

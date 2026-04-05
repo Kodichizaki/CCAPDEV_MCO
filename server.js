@@ -97,7 +97,6 @@ app.get('/orders', (req, res) => {
 app.get('/api/orders', async (req, res) => {
     try {
         const userId = req.query.userId;
-        // Find orders and sort by newest first (-1)
         const orders = await Order.find({ userId }).sort({ orderDate: -1 }); 
         res.json(orders);
     } catch (err) {
@@ -108,12 +107,12 @@ app.get('/api/orders', async (req, res) => {
 // ==========================================
 // USER SETTINGS ROUTES
 // ==========================================
-// 1. Render the settings page
+// Render the settings page
 app.get('/settings', (req, res) => {
     res.render('settings');
 });
 
-// 2. Handle the profile update request
+// Handle the profile update request
 app.put('/api/users/:id', async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -148,7 +147,7 @@ app.put('/api/users/:id', async (req, res) => {
 });
 
 // ==========================================
-// UPGRADED MARKETPLACE ROUTE (Filters & Sorting)
+// MARKETPLACE ROUTE (Filters & Sorting)
 // ==========================================
 app.get('/marketplace', async (req, res) => {
     try {
@@ -156,25 +155,24 @@ app.get('/marketplace', async (req, res) => {
         const { category, sort, search } = req.query;
         let filter = {};
 
-        // 1. Filter by Category
+        // Filter by Category
         if (category && category !== 'all') {
             filter.category = { $in: [category] };
         }
 
-        // 2. Search Bar (Looks for matching words in the item's name)
+        // Search Bar 
         if (search) {
-            filter.name = { $regex: search, $options: 'i' }; // 'i' makes it case-insensitive
+            filter.name = { $regex: search, $options: 'i' };
         }
 
-        // 3. Sorting Logic
+        // Sorting Logic
         let sortOption = {};
-        // Note: We sort by 'priceVal' (the raw number) instead of 'price' (the string with the ₱ symbol)
         if (sort === 'price-asc') sortOption.priceVal = 1;   // Lowest price first
         if (sort === 'price-desc') sortOption.priceVal = -1; // Highest price first
         if (sort === 'name-asc') sortOption.name = 1;        // A to Z
         if (sort === 'name-desc') sortOption.name = -1;      // Z to A
 
-        // 4. Fetch the final list from the database!
+
         const filteredClothes = await Clothing.find(filter).sort(sortOption);
 
         if (req.query.json === 'true') {
@@ -210,19 +208,23 @@ app.post('/cart/add', async (req, res) => {
     try {
         const { userId, item } = req.body;
 
-        // --- NEW: DATE CONFLICT CHECK ---
-        // 1. Find all orders that contain this specific clothing item
+        if (!userId) return res.status(400).json({ message: 'Not logged in' });
+        if (!item.startDate || !item.endDate) return res.status(400).json({ message: 'Please select rental dates' });
+        if (!item.size) return res.status(400).json({ message: 'Please select a size' });
+
         const existingOrders = await Order.find({ "items.clothingId": item.clothingId });
 
-        // 2. Convert the requested dates into JavaScript Date objects for math comparison
         const reqStart = new Date(item.startDate);
         const reqEnd = new Date(item.endDate);
 
+        if (isNaN(reqStart) || isNaN(reqEnd)) {
+            return res.status(400).json({ message: 'Invalid dates provided' });
+        }
+
         let isConflict = false;
 
-        // 3. Loop through orders to check for overlapping dates
         for (let order of existingOrders) {
-            // Ignore "Returned" orders because those clothes are safely back in your shop!
+
             if (order.status === 'Returned') continue; 
 
             for (let orderedItem of order.items) {
@@ -230,17 +232,15 @@ app.post('/cart/add', async (req, res) => {
                     const bookedStart = new Date(orderedItem.startDate);
                     const bookedEnd = new Date(orderedItem.endDate);
 
-                    // OVERLAP LOGIC: If requested start is BEFORE booked end AND requested end is AFTER booked start
                     if (reqStart <= bookedEnd && reqEnd >= bookedStart) {
                         isConflict = true;
                         break;
                     }
                 }
             }
-            if (isConflict) break; // Stop checking if we already found a conflict
+            if (isConflict) break; 
         }
 
-        // 4. Block the user if the dates overlap
         if (isConflict) {
             return res.status(400).json({ 
                 message: 'Sorry! This item is already reserved for those dates. Please choose a different timeframe.' 
@@ -248,13 +248,11 @@ app.post('/cart/add', async (req, res) => {
         }
         // --- END OF DATE CONFLICT CHECK ---
 
-        // If dates are clear, proceed with adding to cart normally
         let cart = await Cart.findOne({ userId });
         if (!cart) {
             cart = new Cart({ userId, items: [] });
         }
 
-        // Add item to the cart array
         cart.items.push({ ...item, quantity: 1 });
         await cart.save();
 
@@ -396,10 +394,8 @@ app.delete('/admin/delete-item/:id', async (req, res) => {
 // ADMIN ORDER MANAGEMENT
 // ==========================================
 
-// 1. Fetch ALL orders for the Admin Panel
 app.get('/api/admin/orders', async (req, res) => {
     try {
-        // .populate() is magic: it looks at the userId, goes to the User database, and grabs their name & email!
         const orders = await Order.find().populate('userId', 'name email').sort({ orderDate: -1 });
         res.json(orders);
     } catch (err) {
@@ -408,7 +404,6 @@ app.get('/api/admin/orders', async (req, res) => {
     }
 });
 
-// 2. Update the status of a specific order
 app.put('/api/admin/orders/:id/status', async (req, res) => {
     try {
         const { status } = req.body;
