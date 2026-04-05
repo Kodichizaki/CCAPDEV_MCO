@@ -39,10 +39,10 @@ app.use(express.static('public'));
 
 
 // ==========================================
-// RENDER UPGRADE: MongoDB Connection
-// Notice the "/hiramph_db" added right before "?ssl=true"!
+// THE "SEPARATE ENVIRONMENTS" FIX
+// Render uses the Cloud. Your PC uses Local Compass!
 // ==========================================
-const dbURI = process.env.MONGODB_URI || 'mongodb://RedHotChiliPepper:Chili123@ac-fzeyh40-shard-00-00.kytsp3h.mongodb.net:27017,ac-fzeyh40-shard-00-01.kytsp3h.mongodb.net:27017,ac-fzeyh40-shard-00-02.kytsp3h.mongodb.net:27017/hiramph_db?ssl=true&replicaSet=atlas-eynmo9-shard-0&authSource=admin&appName=Cluster0';
+const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/hiramph_db';
 
 mongoose.connect(dbURI)
   .then(() => console.log('✅ Connected to MongoDB!'))
