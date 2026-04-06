@@ -35,7 +35,7 @@ app.use(express.static('public'));
 
 
 // Connect to MongoDB
-const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/hiramph_db';
+const dbURI = process.env.MONGODB_URI || 'mongodb://RedHotChiliPepper:Chili123@ac-aoidhhk-shard-00-00.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-01.rv7tofc.mongodb.net:27017,ac-aoidhhk-shard-00-02.rv7tofc.mongodb.net:27017/hiramph_db?ssl=true&replicaSet=atlas-ab6yup-shard-0&authSource=admin&appName=Cluster'
 
 mongoose.connect(dbURI)
   .then(() => console.log('✅ Connected to MongoDB!'))
